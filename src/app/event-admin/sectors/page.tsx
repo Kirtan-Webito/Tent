@@ -4,6 +4,8 @@ import AddSectorButton from '@/app/event-admin/sectors/add-sector-button';
 import DeleteSectorButton from '@/app/event-admin/sectors/delete-sector-button';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 async function getSectors(eventId: string) {
     return await prisma.sector.findMany({
         where: { eventId },

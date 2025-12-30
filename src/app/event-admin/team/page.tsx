@@ -5,6 +5,8 @@ import AddUserButton from '@/app/super-admin/users/add-user-button'; // Reuse? N
 import AddDeskAdminButton from '@/app/event-admin/team/add-desk-admin-button';
 import RemoveDeskAdminButton from '@/app/event-admin/team/remove-desk-admin-button';
 
+export const dynamic = 'force-dynamic';
+
 async function getDeskAdmins(eventId: string) {
     return await prisma.user.findMany({
         where: {

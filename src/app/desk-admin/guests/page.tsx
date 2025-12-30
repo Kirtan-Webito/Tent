@@ -1,5 +1,6 @@
-import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
+
+export const dynamic = 'force-dynamic';
 
 async function getGuests(eventId: string) {
     const sectors = await prisma.sector.findMany({
@@ -76,8 +77,8 @@ export default async function GuestsPage() {
                                     <div className="text-[10px] text-gray-500 font-black uppercase tracking-widest">{guest.age}Y • {guest.gender}</div>
                                 </div>
                                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ${guest.bookingStatus === 'CONFIRMED' ? 'bg-emerald-500/20 text-emerald-400' :
-                                        guest.bookingStatus === 'CHECKED_IN' ? 'bg-blue-500/20 text-blue-400' :
-                                            'bg-white/5 text-gray-400'
+                                    guest.bookingStatus === 'CHECKED_IN' ? 'bg-blue-500/20 text-blue-400' :
+                                        'bg-white/5 text-gray-400'
                                     }`}>
                                     {guest.bookingStatus}
                                 </span>
@@ -135,8 +136,8 @@ export default async function GuestsPage() {
                                     </td>
                                     <td className="p-6">
                                         <span className={`px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase ${guest.bookingStatus === 'CONFIRMED' ? 'bg-green-500/20 text-green-400' :
-                                                guest.bookingStatus === 'CHECKED_IN' ? 'bg-blue-500/20 text-blue-400' :
-                                                    'bg-gray-500/20 text-gray-400'
+                                            guest.bookingStatus === 'CHECKED_IN' ? 'bg-blue-500/20 text-blue-400' :
+                                                'bg-gray-500/20 text-gray-400'
                                             }`}>
                                             {guest.bookingStatus}
                                         </span>
