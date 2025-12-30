@@ -2,8 +2,6 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 
-export const dynamic = 'force-dynamic';
-
 async function getLogs() {
     return await prisma.log.findMany({
         include: {

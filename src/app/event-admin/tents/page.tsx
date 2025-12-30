@@ -3,8 +3,6 @@ import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import TentsClient from './TentsClient';
 
-export const dynamic = 'force-dynamic';
-
 async function getInventory(eventId: string) {
     const tents = await prisma.tent.findMany({
         where: { sector: { eventId } },

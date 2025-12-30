@@ -1,7 +1,5 @@
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
-
-export const dynamic = 'force-dynamic';
 import { LockClosedIcon, HomeIcon } from '@radix-ui/react-icons';
 
 async function getInventory(eventId: string, sectorId?: string) {

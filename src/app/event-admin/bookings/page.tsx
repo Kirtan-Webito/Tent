@@ -3,8 +3,6 @@ import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import BookingsClient from './BookingsClient';
 
-export const dynamic = 'force-dynamic';
-
 export default async function BookingsPage() {
     const session = await getSession();
     const eventId = (session as any)?.assignedEventId;

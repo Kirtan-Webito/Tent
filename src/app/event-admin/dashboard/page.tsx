@@ -13,8 +13,6 @@ import {
     FileTextIcon
 } from '@radix-ui/react-icons';
 
-export const dynamic = 'force-dynamic';
-
 async function getStats(eventId: string) {
     const sectors = await prisma.sector.findMany({
         where: { eventId },

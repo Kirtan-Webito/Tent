@@ -1,8 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 
-export const dynamic = 'force-dynamic';
-
 async function getBookingHistory(deskAdminId: string) {
     return await prisma.booking.findMany({
         where: { deskAdminId },

@@ -2,8 +2,6 @@ import { prisma } from '@/lib/prisma';
 import AddEventButton from '@/app/super-admin/events/add-event-button';
 import { GlobeIcon, SewingPinFilledIcon, RadiobuttonIcon } from '@radix-ui/react-icons';
 
-export const dynamic = 'force-dynamic';
-
 async function getEvents() {
     return await prisma.event.findMany({
         include: {

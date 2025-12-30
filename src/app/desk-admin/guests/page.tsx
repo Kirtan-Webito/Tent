@@ -1,8 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 
-export const dynamic = 'force-dynamic';
-
 async function getGuests(eventId: string) {
     const sectors = await prisma.sector.findMany({
         where: { eventId },

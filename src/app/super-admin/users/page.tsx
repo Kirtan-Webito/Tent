@@ -2,8 +2,6 @@ import { prisma } from '@/lib/prisma';
 import AddUserButton from '@/app/super-admin/users/add-user-button';
 import { PersonIcon, LockClosedIcon } from '@radix-ui/react-icons';
 
-export const dynamic = 'force-dynamic';
-
 async function getUsers() {
     return await prisma.user.findMany({
         where: {

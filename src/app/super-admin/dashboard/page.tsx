@@ -4,8 +4,6 @@ import StatsCard from '@/components/ui/StatsCard';
 import BarChart from '@/components/charts/BarChart';
 import DonutChart from '@/components/charts/DonutChart';
 import { formatDistanceToNow } from 'date-fns';
-
-export const dynamic = 'force-dynamic';
 import {
     GlobeIcon,
     LockClosedIcon,
