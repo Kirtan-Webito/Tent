@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 import AddUserButton from '@/app/super-admin/users/add-user-button'; // Reuse? Need slight mod or new component

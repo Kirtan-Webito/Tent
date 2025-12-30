@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { prisma } from '@/lib/prisma';
 import BulkCreateTents from './bulk-create-tents';
 import BulkDeleteTents from './bulk-delete-tents';

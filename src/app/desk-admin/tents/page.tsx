@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 import { LockClosedIcon, HomeIcon } from '@radix-ui/react-icons';

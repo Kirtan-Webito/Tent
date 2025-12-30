@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { prisma } from '@/lib/prisma';
 import AddUserButton from '@/app/super-admin/users/add-user-button';
 import { PersonIcon, LockClosedIcon } from '@radix-ui/react-icons';
