@@ -11,8 +11,11 @@ import {
     Pencil2Icon,
     BarChartIcon,
     RadiobuttonIcon,
-    MoonIcon
+    MoonIcon,
+    BellIcon
 } from '@radix-ui/react-icons';
+
+export const dynamic = 'force-dynamic';
 
 async function getDashboardData(eventId: string, sectorId?: string) {
     const now = new Date();

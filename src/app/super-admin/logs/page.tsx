@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 async function getLogs() {
     return await prisma.log.findMany({
         include: {
@@ -53,9 +55,9 @@ export default async function LogsPage() {
                         >
                             <div className="flex justify-between items-start mb-4">
                                 <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest border ${log.action.includes('DELETE') ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                                        log.action.includes('CREATE') ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                                            log.action.includes('UPDATE') ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                                                'bg-white/5 text-gray-400 border-white/10'
+                                    log.action.includes('CREATE') ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                                        log.action.includes('UPDATE') ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                                            'bg-white/5 text-gray-400 border-white/10'
                                     }`}>
                                     {log.action}
                                 </span>
@@ -111,9 +113,9 @@ export default async function LogsPage() {
                                     </td>
                                     <td className="p-6">
                                         <span className={`px-2 py-1 rounded-lg text-[10px] font-black border uppercase tracking-widest ${log.action.includes('DELETE') ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                                                log.action.includes('CREATE') ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                                                    log.action.includes('UPDATE') ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                                                        'bg-gray-500/10 text-gray-400 border-gray-500/20'
+                                            log.action.includes('CREATE') ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                                                log.action.includes('UPDATE') ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                                                    'bg-gray-500/10 text-gray-400 border-gray-500/20'
                                             }`}>
                                             {log.action}
                                         </span>

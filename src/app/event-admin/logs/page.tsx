@@ -3,6 +3,8 @@ import { getSession } from '@/lib/session';
 import { formatDistanceToNow } from 'date-fns';
 import { FileTextIcon, MagnifyingGlassIcon, MixerHorizontalIcon } from '@radix-ui/react-icons';
 
+export const dynamic = 'force-dynamic';
+
 async function getLogs(eventId: string) {
     // Find all users associated with this event
     const eventUsers = await prisma.user.findMany({
