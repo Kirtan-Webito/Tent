@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { prisma } from '@/lib/prisma';
 import AddUserButton from '@/app/super-admin/users/add-user-button';
+import EditEventAdminButton from '@/app/super-admin/users/edit-event-admin-button';
 import { PersonIcon, LockClosedIcon } from '@radix-ui/react-icons';
 
 async function getUsers() {
@@ -73,7 +74,8 @@ export default async function UsersPage() {
                                 )}
                             </div>
 
-                            <div className="flex justify-end">
+                            <div className="flex justify-end gap-3">
+                                <EditEventAdminButton user={user} events={events} />
                                 <button className="px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all active:scale-95">
                                     Deactivate
                                 </button>
@@ -127,7 +129,10 @@ export default async function UsersPage() {
                                         )}
                                     </td>
                                     <td className="p-6 text-right">
-                                        <button className="text-red-400 hover:text-red-300 font-black text-[10px] uppercase tracking-widest transition-colors">Deactivate</button>
+                                        <div className="flex items-center justify-end gap-3">
+                                            <EditEventAdminButton user={user} events={events} />
+                                            <button className="text-red-400 hover:text-red-300 font-black text-[10px] uppercase tracking-widest transition-colors">Deactivate</button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))

@@ -57,7 +57,7 @@ export async function PATCH(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { id, name, email, password, assignedSectorIds } = await req.json();
+        const { id, name, email, password, assignedSectorIds, eventId } = await req.json();
 
         if (!id) {
             return NextResponse.json({ error: 'Missing User ID' }, { status: 400 });
@@ -67,6 +67,7 @@ export async function PATCH(req: Request) {
         if (name) updateData.name = name;
         if (email) updateData.email = email;
         if (password) updateData.password = await bcrypt.hash(password, 10);
+        if (eventId) updateData.assignedEventId = eventId;
 
         if (assignedSectorIds) {
             updateData.assignedSectors = {

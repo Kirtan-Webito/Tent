@@ -77,7 +77,7 @@ export default async function EventLogsPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {logs.map((log) => (
+                            {(logs as any[]).map((log) => (
                                 <tr key={log.id} className="hover:bg-white/[0.02] transition-colors group">
                                     <td className="px-8 py-5">
                                         <div className="text-xs text-gray-300 font-mono">

@@ -48,7 +48,7 @@ export default async function HistoryPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
-                            {bookings.map((booking) => (
+                            {(bookings as any[]).map((booking) => (
                                 <tr key={booking.id} className="hover:bg-white/5 transition">
                                     <td className="py-3 px-4 font-mono text-xs">{booking.id.slice(0, 8)}...</td>
                                     <td className="py-3 px-4 font-bold text-white">{booking.members[0]?.name || 'Unknown'}</td>
