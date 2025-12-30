@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users (Admins)
+model User {
+  id              String    @id @default(uuid())
+  email           String    @unique
+  password        String
+  role            String // Enum: SUPER_ADMIN, EVENT_ADMIN, DESK_ADMIN
+  name            String?
+  assignedEventId String?
+  assignedEvent   Event?    @relation(fields: [assignedEventId], references: [id])
+  assignedSectorId String?
+  assignedSector   Sector?   @relation(fields: [assignedSectorId], references: [id])
+  bookings        Booking[] // For Desk Admins handling bookings
+  logs            Log[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// Events
+model Event {
+  id                String             @id @default(uuid())
+  name              String
+  location          String
+  startDate         DateTime
+  endDate           DateTime
+  sectors           Sector[]
+  users             User[] // Admins assigned to this event
+  emergencyContacts EmergencyContact[]
+  sops              SOP[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+// Sectors within an Event
+model Sector {
+  id        String   @id @default(uuid())
+  name      String
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tents     Tent[]
+  assignedUsers User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Tents within a Sector
+model Tent {
+  id              String           @id @default(uuid())
+  name            String
+  capacity        Int
+  sectorId        String
+  sector          Sector           @relation(fields: [sectorId], references: [id], onDelete: Cascade)
+  bookings        Booking[]
+  serviceRequests ServiceRequest[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+// Bookings
+model Booking {
+  id           String    @id @default(uuid())
+  tentId       String
+  tent         Tent      @relation(fields: [tentId], references: [id])
+  deskAdminId  String
+  deskAdmin    User      @relation(fields: [deskAdminId], references: [id])
+  members      Member[]
+  mobile       String?
+  notes        String?
+  checkInDate  DateTime?
+  checkOutDate DateTime?
+  checkInTime  DateTime? // Actual check-in timestamp
+  checkOutTime DateTime? // Actual check-out timestamp
+  status       String    @default("CONFIRMED") // PENDING, CONFIRMED, CHECKED_IN, CHECKED_OUT, CANCELLED
+  isVIP        Boolean   @default(false)
+  bookingNotes BookingNote[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model BookingNote {
+  id        String   @id @default(uuid())
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  content   String
+  author    String   // Name of the admin who added the note
+  createdAt DateTime @default(now())
+}
+
+// Members in a Booking
+model Member {
+  id           String    @id @default(uuid())
+  name         String
+  age          Int
+  gender       String // Enum: MALE, FEMALE, OTHER
+  contact      String?
+  bookingId    String
+  booking      Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  checkedInAt  DateTime?
+  checkedOutAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// Service Requests (Desk Admin)
+model ServiceRequest {
+  id        String   @id @default(uuid())
+  tentId    String
+  tent      Tent     @relation(fields: [tentId], references: [id])
+  request   String // e.g. "Extra Towels"
+  status    String   @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Audit Logs
+model Log {
+  id        String   @id @default(uuid())
+  action    String
+  details   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+// Emergency Contacts (Event-specific)
+model EmergencyContact {
+  id        String   @id @default(uuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  title     String // e.g. "Security Head"
+  name      String // e.g. "Mr. John Wick"
+  phone     String
+  order     Int      @default(0) // For sorting
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Standard Operating Procedures (Event-specific)
+model SOP {
+  id        String   @id @default(uuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  rule      String // The SOP rule text
+  order     Int      @default(0) // For sorting
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Notifications for Admins
+model Notification {
+  id        String   @id @default(uuid())
+  eventId   String?
+  targetRole String? // ALL, EVENT_ADMIN, DESK_ADMIN
+  type      String   // INFO, WARNING, SUCCESS, ERROR
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
