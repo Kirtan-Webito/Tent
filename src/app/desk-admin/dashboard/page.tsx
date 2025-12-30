@@ -16,7 +16,7 @@ import {
     MoonIcon
 } from '@radix-ui/react-icons';
 
-async function getDashboardData(eventId: string, sectorId?: string) {
+async function getDashboardData(eventId: string, sectorIds?: string[]) {
     const now = new Date();
     const todayStart = startOfDay(now);
     const todayEnd = endOfDay(now);
@@ -24,7 +24,7 @@ async function getDashboardData(eventId: string, sectorId?: string) {
     const sectors = await prisma.sector.findMany({
         where: {
             eventId,
-            ...(sectorId ? { id: sectorId } : {})
+            ...(sectorIds && sectorIds.length > 0 ? { id: { in: sectorIds } } : {})
         },
         include: {
             tents: {
@@ -118,11 +118,11 @@ async function getDashboardData(eventId: string, sectorId?: string) {
 export default async function DashboardPage() {
     const session = await getSession();
     const eventId = (session as any)?.assignedEventId;
-    const sectorId = (session as any)?.assignedSectorId;
+    const sectorIds = (session as any)?.assignedSectorIds;
 
     if (!eventId) return <div className="p-8 text-gray-500 font-medium glass rounded-2xl">Access Denied: No event assigned to your session.</div>;
 
-    const stats = await getDashboardData(eventId, sectorId);
+    const stats = await getDashboardData(eventId, sectorIds);
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">

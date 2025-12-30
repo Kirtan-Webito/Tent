@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Modal from '@/components/ui/Modal';
 
 interface Member {
@@ -42,7 +44,34 @@ export default function TentDetailsModal({
     isOpen: boolean;
     onClose: () => void;
 }) {
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
     if (!tent) return null;
+
+    const handleDelete = async () => {
+        if (!confirm(`Are you sure you want to delete tent ${tent.name}? This cannot be undone.`)) return;
+
+        setLoading(true);
+        try {
+            const res = await fetch(`/api/tents/${tent.id}`, {
+                method: 'DELETE',
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                onClose();
+                router.refresh();
+            } else {
+                alert(data.error || 'Failed to delete tent.');
+            }
+        } catch (error) {
+            console.error('Delete error:', error);
+            alert('An error occurred while deleting the tent.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <Modal
@@ -50,12 +79,22 @@ export default function TentDetailsModal({
             onClose={onClose}
             title={`Tent ${tent.name}`}
             actions={
-                <button
-                    onClick={onClose}
-                    className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition"
-                >
-                    Close
-                </button>
+                <div className="flex justify-between w-full">
+                    <button
+                        onClick={handleDelete}
+                        disabled={loading || !!tent.currentBooking}
+                        className="px-4 py-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg transition disabled:opacity-30 disabled:hover:bg-red-500/10 disabled:hover:text-red-500"
+                        title={tent.currentBooking ? "Cannot delete occupied tent" : "Delete Tent"}
+                    >
+                        {loading ? 'Deleting...' : 'Delete Tent'}
+                    </button>
+                    <button
+                        onClick={onClose}
+                        className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition"
+                    >
+                        Close
+                    </button>
+                </div>
             }
         >
             <div className="space-y-6">

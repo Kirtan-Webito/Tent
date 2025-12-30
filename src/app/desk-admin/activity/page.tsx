@@ -4,19 +4,17 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 
 async function getLogs(eventId: string) {
-    // Assuming we have a way to filter logs by event, or we just show global logs for now if they are not event-scoped.
-    // Ideally, logs should be related to bookings which are related to tents/sectors in the event.
-    // For now, let's fetch recent logs. In a real app, you'd filter by event.
-
-    // FETCH STRATEGY: Find all logs where the related booking's tent is in the event.
-    // This might be complex, so let's just show the last 50 logs for simplicity, 
-    // or if we added eventId to logs, filter by that.
-
+    // Fetch logs related to the event
     const logs = await prisma.log.findMany({
+        where: {
+            user: {
+                assignedEventId: eventId
+            }
+        },
         take: 50,
         orderBy: { createdAt: 'desc' },
         include: {
-            user: true // The admin who performed the action
+            user: true
         }
     });
 
@@ -26,6 +24,7 @@ async function getLogs(eventId: string) {
 export default async function ActivityPage() {
     const session = await getSession();
     const eventId = (session as any)?.assignedEventId;
+    const sectorIds = (session as any)?.assignedSectorIds;
 
     if (!eventId) return <div className="p-8 text-gray-500">No event assigned.</div>;
 
@@ -54,7 +53,7 @@ export default async function ActivityPage() {
                                 <div className="flex items-center gap-4 text-xs text-gray-600">
                                     <span>By: {log.user?.name || log.user?.email || 'System'}</span>
                                     <span>•</span>
-                                    <span>{new Date(log.timestamp).toLocaleString()}</span>
+                                    <span>{new Date(log.createdAt).toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>

@@ -6,29 +6,33 @@ import { redirect } from 'next/navigation';
 import TentsClient from './TentsClient';
 
 async function getInventory(eventId: string) {
-    const tents = await prisma.tent.findMany({
-        where: { sector: { eventId } },
+    const sectors = await prisma.sector.findMany({
+        where: { eventId },
         include: {
-            sector: true,
-            bookings: {
-                where: {
-                    status: 'CONFIRMED'
-                },
+            tents: {
                 include: {
-                    members: true
+                    bookings: {
+                        where: { status: 'CONFIRMED' },
+                        include: { members: true },
+                        take: 1
+                    }
                 },
-                take: 1 // Get the first confirmed booking
+                orderBy: { name: 'asc' }
             }
-        }
+        },
+        orderBy: { name: 'asc' }
     });
 
-    return tents.map((tent: any) => ({
-        id: tent.id,
-        name: tent.name,
-        capacity: tent.capacity,
-        sector: tent.sector,
-        status: tent.bookings.length > 0 ? 'Occupied' : 'Available',
-        currentBooking: tent.bookings[0] || null
+    return sectors.map((sector: any) => ({
+        id: sector.id,
+        name: sector.name,
+        tents: sector.tents.map((tent: any) => ({
+            id: tent.id,
+            name: tent.name,
+            capacity: tent.capacity,
+            status: tent.bookings.length > 0 ? 'Occupied' : 'Available',
+            currentBooking: tent.bookings[0] || null
+        }))
     }));
 }
 

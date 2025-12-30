@@ -3,9 +3,12 @@ export const dynamic = 'force-dynamic';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 
-async function getGuests(eventId: string) {
+async function getGuests(eventId: string, sectorIds?: string[]) {
     const sectors = await prisma.sector.findMany({
-        where: { eventId },
+        where: {
+            eventId,
+            ...(sectorIds && sectorIds.length > 0 ? { id: { in: sectorIds } } : {})
+        },
         include: {
             tents: {
                 include: {
@@ -38,10 +41,11 @@ async function getGuests(eventId: string) {
 export default async function GuestsPage() {
     const session = await getSession();
     const eventId = (session as any)?.assignedEventId;
+    const sectorIds = (session as any)?.assignedSectorIds;
 
     if (!eventId) return <div className="p-8 text-gray-500">No event assigned.</div>;
 
-    const guests = await getGuests(eventId);
+    const guests = await getGuests(eventId, sectorIds);
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">

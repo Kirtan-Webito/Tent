@@ -14,6 +14,7 @@ export async function POST(req: Request) {
 
         const user = await prisma.user.findUnique({
             where: { email },
+            include: { assignedSectors: { select: { id: true } } }
         });
 
         if (!user) {
@@ -34,7 +35,7 @@ export async function POST(req: Request) {
             role: user.role,
             name: user.name,
             assignedEventId: user.assignedEventId,
-            assignedSectorId: user.assignedSectorId
+            assignedSectorIds: user.assignedSectors.map((s: { id: string }) => s.id)
         });
 
         // Set Cookie

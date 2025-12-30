@@ -6,6 +6,7 @@ import AddUserButton from '@/app/super-admin/users/add-user-button'; // Reuse? N
 
 import AddDeskAdminButton from '@/app/event-admin/team/add-desk-admin-button';
 import RemoveDeskAdminButton from '@/app/event-admin/team/remove-desk-admin-button';
+import EditDeskAdminButton from '@/app/event-admin/team/edit-desk-admin-button';
 
 async function getDeskAdmins(eventId: string) {
     return await prisma.user.findMany({
@@ -19,7 +20,9 @@ async function getDeskAdmins(eventId: string) {
             email: true,
             role: true,
             createdAt: true,
-            assignedSector: true
+            assignedSectors: {
+                select: { id: true, name: true }
+            }
         },
         orderBy: { createdAt: 'desc' }
     });
@@ -78,13 +81,20 @@ export default async function TeamPage() {
                                     <span className="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] font-black uppercase tracking-widest">
                                         DESK_ADMIN
                                     </span>
-                                    {user.assignedSector && (
-                                        <span className="text-[9px] text-gray-500 font-bold uppercase tracking-tighter">
-                                            Sector: {user.assignedSector.name}
-                                        </span>
+                                    {user.assignedSectors && user.assignedSectors.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 mt-1 justify-end">
+                                            {user.assignedSectors.map((s: any) => (
+                                                <span key={s.id} className="text-[8px] text-gray-500 font-bold uppercase tracking-tighter bg-white/5 px-1.5 py-0.5 rounded">
+                                                    {s.name}
+                                                </span>
+                                            ))}
+                                        </div>
                                     )}
                                 </div>
-                                <RemoveDeskAdminButton userId={user.id} userName={user.name!} />
+                                <div className="flex items-center gap-2">
+                                    <EditDeskAdminButton user={user} allSectors={sectors} />
+                                    <RemoveDeskAdminButton userId={user.id} userName={user.name!} />
+                                </div>
                             </div>
                         </div>
                     ))
@@ -127,14 +137,18 @@ export default async function TeamPage() {
                                     </td>
                                     <td className="p-6 text-gray-400 font-medium">{user.email}</td>
                                     <td className="p-6">
-                                        {user.assignedSector ? (
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-2 h-2 rounded-full bg-purple-400/40" />
-                                                <span className="text-white font-bold">{user.assignedSector.name}</span>
-                                            </div>
-                                        ) : (
-                                            <span className="text-gray-600 italic">Unassigned</span>
-                                        )}
+                                        <div className="flex flex-wrap gap-2">
+                                            {user.assignedSectors && user.assignedSectors.length > 0 ? (
+                                                user.assignedSectors.map((s: any) => (
+                                                    <div key={s.id} className="flex items-center gap-2 bg-purple-500/5 px-2 py-1 rounded-lg border border-purple-500/10">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-purple-400/40" />
+                                                        <span className="text-[10px] text-white font-bold uppercase tracking-widest">{s.name}</span>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span className="text-gray-600 italic">Unassigned</span>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="p-6">
                                         <span className="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] font-black uppercase tracking-widest">
@@ -142,7 +156,10 @@ export default async function TeamPage() {
                                         </span>
                                     </td>
                                     <td className="p-6 text-right">
-                                        <RemoveDeskAdminButton userId={user.id} userName={user.name!} />
+                                        <div className="flex items-center justify-end">
+                                            <EditDeskAdminButton user={user} allSectors={sectors} />
+                                            <RemoveDeskAdminButton userId={user.id} userName={user.name!} />
+                                        </div>
                                     </td>
                                 </tr>
                             ))

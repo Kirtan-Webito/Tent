@@ -7,7 +7,7 @@ export interface Session {
     role: string;
     name: string | null;
     assignedEventId?: string | null;
-    assignedSectorId?: string | null;
+    assignedSectorIds?: string[] | null;
 }
 
 export async function getSession(): Promise<Session | null> {

@@ -4,11 +4,11 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 import { LockClosedIcon, HomeIcon } from '@radix-ui/react-icons';
 
-async function getInventory(eventId: string, sectorId?: string) {
+async function getInventory(eventId: string, sectorIds?: string[]) {
     return await prisma.sector.findMany({
         where: {
             eventId,
-            ...(sectorId ? { id: sectorId } : {})
+            ...(sectorIds && sectorIds.length > 0 ? { id: { in: sectorIds } } : {})
         },
         include: {
             tents: {
@@ -29,7 +29,7 @@ async function getInventory(eventId: string, sectorId?: string) {
 export default async function DeskTentsPage() {
     const session = await getSession();
     const eventId = (session as any)?.assignedEventId;
-    const sectorId = (session as any)?.assignedSectorId;
+    const sectorIds = (session as any)?.assignedSectorIds;
 
     if (!eventId) {
         return (
@@ -40,7 +40,7 @@ export default async function DeskTentsPage() {
         );
     }
 
-    const sectors = await getInventory(eventId, sectorId);
+    const sectors = await getInventory(eventId, sectorIds);
 
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-1000">

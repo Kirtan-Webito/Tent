@@ -4,12 +4,12 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 import BookingInterface from '@/app/desk-admin/booking/booking-interface';
 
-async function getEventData(eventId: string, sectorId?: string) {
+async function getEventData(eventId: string, sectorIds?: string[]) {
     // Fetch sectors and their tents with current occupancy
     const sectors = await prisma.sector.findMany({
         where: {
             eventId,
-            ...(sectorId ? { id: sectorId } : {})
+            ...(sectorIds && sectorIds.length > 0 ? { id: { in: sectorIds } } : {})
         },
         include: {
             tents: {
@@ -42,7 +42,7 @@ async function getEventData(eventId: string, sectorId?: string) {
 export default async function BookingPage() {
     const session = await getSession();
     const eventId = (session as any)?.assignedEventId;
-    const sectorId = (session as any)?.assignedSectorId;
+    const sectorIds = (session as any)?.assignedSectorIds;
 
     if (!eventId) {
         return (
@@ -52,7 +52,7 @@ export default async function BookingPage() {
         );
     }
 
-    const sectors = await getEventData(eventId, sectorId);
+    const sectors = await getEventData(eventId, sectorIds);
 
     return (
         <div className="space-y-8">

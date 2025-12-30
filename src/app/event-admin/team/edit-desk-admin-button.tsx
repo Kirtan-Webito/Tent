@@ -4,10 +4,30 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from '@/components/ui/Modal';
 
-export default function AddDeskAdminButton({ eventId, sectors }: { eventId: string; sectors: any[] }) {
+interface Sector {
+    id: string;
+    name: string;
+}
+
+interface User {
+    id: string;
+    name: string | null;
+    email: string;
+    assignedSectors: Sector[];
+}
+
+export default function EditDeskAdminButton({
+    user,
+    allSectors
+}: {
+    user: User;
+    allSectors: Sector[]
+}) {
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [selectedSectorIds, setSelectedSectorIds] = useState<string[]>([]);
+    const [selectedSectorIds, setSelectedSectorIds] = useState<string[]>(
+        user.assignedSectors.map(s => s.id)
+    );
     const router = useRouter();
 
     const toggleSector = (id: string) => {
@@ -25,29 +45,29 @@ export default function AddDeskAdminButton({ eventId, sectors }: { eventId: stri
         setLoading(true);
 
         const formData = new FormData(e.currentTarget);
-        const data = {
+        const data: any = {
+            id: user.id,
             name: formData.get('name'),
             email: formData.get('email'),
-            password: formData.get('password'),
             assignedSectorIds: selectedSectorIds,
-            eventId: eventId,
-            role: 'DESK_ADMIN'
         };
+
+        const password = formData.get('password');
+        if (password) data.password = password;
 
         try {
             const res = await fetch('/api/users', {
-                method: 'POST',
+                method: 'PATCH',
                 body: JSON.stringify(data),
                 headers: { 'Content-Type': 'application/json' }
             });
 
             if (res.ok) {
                 setIsOpen(false);
-                setSelectedSectorIds([]);
                 router.refresh();
             } else {
                 const err = await res.json();
-                alert(err.error || 'Creation failed');
+                alert(err.error || 'Update failed');
             }
         } catch (error) {
             console.error(error);
@@ -61,15 +81,15 @@ export default function AddDeskAdminButton({ eventId, sectors }: { eventId: stri
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className="group relative px-6 py-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 font-black uppercase tracking-widest text-xs hover:bg-purple-500 hover:text-white transition-all duration-300"
+                className="px-3 py-1.5 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400 font-black text-[10px] uppercase tracking-widest hover:bg-purple-500 hover:text-white transition-all active:scale-95"
             >
-                <span className="relative z-10 text-nowrap">+ Recruit Operator</span>
+                Edit
             </button>
 
             <Modal
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
-                title="Recruit New Operator"
+                title="Edit Personnel Assignment"
                 actions={
                     <div className="flex gap-3 w-full">
                         <button
@@ -77,37 +97,37 @@ export default function AddDeskAdminButton({ eventId, sectors }: { eventId: stri
                             onClick={() => setIsOpen(false)}
                             className="flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all"
                         >
-                            Abort
+                            Cancel
                         </button>
                         <button
-                            form="add-operator-form"
+                            form="edit-operator-form"
                             type="submit"
                             disabled={loading}
                             className="flex-[2] py-3 rounded-xl bg-purple-500 text-white text-xs font-black uppercase tracking-widest hover:bg-purple-400 disabled:opacity-50 transition-all"
                         >
-                            {loading ? 'Processing...' : 'Authorize Access'}
+                            {loading ? 'Saving...' : 'Update Records'}
                         </button>
                     </div>
                 }
             >
-                <form id="add-operator-form" onSubmit={handleSubmit} className="space-y-6">
+                <form id="edit-operator-form" onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-4">
                         <div>
                             <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Full Name</label>
-                            <input name="name" required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500/50 transition-colors" placeholder="e.g. Alex Rivera" />
+                            <input name="name" defaultValue={user.name || ''} required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500/50 transition-colors" placeholder="e.g. Alex Rivera" />
                         </div>
                         <div>
                             <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Email Address</label>
-                            <input name="email" type="email" required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500/50 transition-colors" placeholder="alex@operations.tent" />
+                            <input name="email" type="email" defaultValue={user.email} required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500/50 transition-colors" placeholder="alex@operations.tent" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Temporary Password</label>
-                            <input name="password" type="password" required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500/50 transition-colors" placeholder="••••••••" />
+                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">New Password (optional)</label>
+                            <input name="password" type="password" className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500/50 transition-colors" placeholder="••••••••" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Assigned Operational Zones</label>
+                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Operational Zones</label>
                             <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-black/20 rounded-xl border border-white/5">
-                                {sectors.map(sector => (
+                                {allSectors.map(sector => (
                                     <div
                                         key={sector.id}
                                         onClick={() => toggleSector(sector.id)}

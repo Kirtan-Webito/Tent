@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { prisma } from '@/lib/prisma';
 import BulkCreateTents from './bulk-create-tents';
 import BulkDeleteTents from './bulk-delete-tents';
+import DeleteTentButton from '../delete-tent-button';
 
 async function getSector(id: string) {
     return await prisma.sector.findUnique({
@@ -69,6 +70,7 @@ export default async function SectorDetailsPage({ params }: { params: Promise<{ 
                                     key={tent.id}
                                     className="group relative p-4 rounded-2xl border border-white/5 bg-black/20 hover:bg-white/5 hover:border-primary/30 transition-all duration-300 hover:scale-105"
                                 >
+                                    <DeleteTentButton tentId={tent.id} tentName={tent.name} />
                                     <div className="flex flex-col items-center text-center">
                                         <div className="text-[8px] font-black text-gray-600 uppercase tracking-widest mb-1 group-hover:text-primary transition-colors">NODEID</div>
                                         <div className="font-black text-lg text-white group-hover:text-primary transition-colors tracking-tighter mb-1">{tent.name}</div>

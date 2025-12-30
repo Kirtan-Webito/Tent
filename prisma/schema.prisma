@@ -16,8 +16,7 @@ model User {
   name            String?
   assignedEventId String?
   assignedEvent   Event?    @relation(fields: [assignedEventId], references: [id])
-  assignedSectorId String?
-  assignedSector   Sector?   @relation(fields: [assignedSectorId], references: [id])
+  assignedSectors  Sector[]
   bookings        Booking[] // For Desk Admins handling bookings
   logs            Log[]
   createdAt       DateTime  @default(now())

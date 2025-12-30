@@ -18,7 +18,12 @@ async function getBookingHistory(deskAdminId: string) {
 
 export default async function HistoryPage() {
     const session = await getSession();
-    const bookings = await getBookingHistory((session as any).id);
+    const eventId = (session as any)?.assignedEventId;
+    const sectorIds = (session as any)?.assignedSectorIds;
+
+    if (!session || !session.id) return <div className="p-8 text-gray-500">Access Denied.</div>;
+
+    const bookings = await getBookingHistory(session.id);
 
     return (
         <div className="space-y-8">
