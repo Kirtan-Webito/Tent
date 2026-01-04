@@ -36,30 +36,29 @@ export default function BulkDeleteTents({ sectorId }: { sectorId: string }) {
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className="group relative px-6 py-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 font-black uppercase tracking-widest text-xs hover:bg-red-500 hover:text-white transition-all duration-300 overflow-hidden"
+                className="group relative px-6 py-3 rounded-2xl bg-red-50 border border-red-200 text-red-600 font-black uppercase tracking-widest text-xs hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg"
             >
                 <span className="relative z-10 text-nowrap">Clear Sector</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-rose-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </button>
 
             {isOpen && (
-                <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-                    <div className="glass p-8 rounded-[2.5rem] w-full max-w-sm border-white/10 shadow-2xl animate-in zoom-in-95 duration-300">
+                <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/20 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+                    <div className="bg-white p-8 rounded-[2.5rem] w-full max-w-sm border border-border shadow-2xl animate-in zoom-in-95 duration-300">
                         <div className="text-center mb-6">
-                            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
+                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-200">
                                 <span className="text-2xl">⚠️</span>
                             </div>
-                            <h2 className="text-2xl font-black text-white tracking-tighter mb-2">Total Purge</h2>
-                            <p className="text-sm text-gray-400">This will permanently delete all tents in this sector. This action cannot be undone.</p>
+                            <h2 className="text-2xl font-black text-foreground tracking-tighter mb-2">Total Purge</h2>
+                            <p className="text-sm text-muted-foreground">This will permanently delete all tents in this sector. This action cannot be undone.</p>
                         </div>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 text-center">Type <span className="text-white">CLEAR</span> to proceed</label>
+                                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2 text-center">Type <span className="text-red-600">CLEAR</span> to proceed</label>
                                 <input
                                     value={confirmText}
                                     onChange={(e) => setConfirmText(e.target.value.toUpperCase())}
-                                    className="input-primary w-full text-center tracking-[0.5em] font-black border-red-500/30 focus:border-red-500"
+                                    className="input-primary w-full text-center tracking-[0.5em] font-black border-red-200 focus:border-red-500 bg-red-50 text-red-900 placeholder:text-red-200"
                                     placeholder="----"
                                 />
                             </div>
@@ -68,13 +67,13 @@ export default function BulkDeleteTents({ sectorId }: { sectorId: string }) {
                                 <button
                                     onClick={handleDelete}
                                     disabled={loading || confirmText !== 'CLEAR'}
-                                    className="w-full py-4 rounded-2xl bg-red-500 text-black text-xs font-black uppercase tracking-widest hover:bg-red-400 disabled:opacity-30 transition-all active:scale-95"
+                                    className="w-full py-4 rounded-2xl bg-red-600 text-white text-xs font-black uppercase tracking-widest hover:bg-red-500 hover:shadow-lg disabled:opacity-30 disabled:hover:shadow-none transition-all active:scale-95 shadow-md"
                                 >
                                     {loading ? 'Purging...' : 'Execute Purge'}
                                 </button>
                                 <button
                                     onClick={() => setIsOpen(false)}
-                                    className="w-full py-4 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-500 hover:text-white transition-all"
+                                    className="w-full py-4 rounded-2xl text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-secondary transition-all"
                                 >
                                     Abort
                                 </button>

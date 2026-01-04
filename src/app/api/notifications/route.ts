@@ -10,7 +10,7 @@ export async function GET(req: Request) {
         const eventId = (session as any).assignedEventId || (session as any).eventId;
         const userRole = (session as any).role;
 
-        // Fetch notifications for THIS event + system-wide ones 
+        // Fetch notifications for THIS event + system-wide ones
         // AND filter by targetRole (ALL or matching user's role)
         const notifications = await prisma.notification.findMany({
             where: {
@@ -108,6 +108,11 @@ export async function POST(req: Request) {
                 type: type || 'INFO',
                 read: false
             }
+        });
+
+        // Emit for real-time delivery
+        import('@/lib/events').then(({ notificationEmitter }) => {
+            notificationEmitter.emit('new-notification', notification);
         });
 
         await prisma.log.create({

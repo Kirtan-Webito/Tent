@@ -49,11 +49,11 @@ async function getSuperStats() {
         return {
             label: e.name,
             value: activeCount,
-            color: 'bg-indigo-500'
+            color: 'bg-primary'
         };
     });
 
-    // Booking Status Distribution
+    // Booking Status Distribution - Using Theme Colors
     const bookingStatuses = {
         CONFIRMED: bookings.filter((b: any) => b.status === 'CONFIRMED').length,
         CHECKED_IN: bookings.filter((b: any) => b.status === 'CHECKED_IN').length,
@@ -62,7 +62,7 @@ async function getSuperStats() {
     };
 
     const bookingStatusData = [
-        { label: 'Confirmed', value: bookingStatuses.CONFIRMED, color: '#6366F1' },
+        { label: 'Confirmed', value: bookingStatuses.CONFIRMED, color: '#e34000' }, // Primary
         { label: 'In Tent', value: bookingStatuses.CHECKED_IN, color: '#10B981' },
         { label: 'Archived', value: bookingStatuses.CHECKED_OUT, color: '#6B7280' },
         { label: 'Cancelled', value: bookingStatuses.CANCELLED, color: '#EF4444' },
@@ -88,14 +88,14 @@ export default async function SuperAdminDashboard() {
             {/* Page Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-4">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-500 bg-clip-text text-transparent">
+                    <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">
                         Global Command
                     </h1>
-                    <p className="text-sm md:text-base text-gray-400 mt-1 font-medium italic">High-level oversight of all event ecosystems.</p>
+                    <p className="text-sm md:text-base text-muted-foreground mt-1 font-medium italic">High-level oversight of all event ecosystems.</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="px-4 py-2 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-bold flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                    <div className="px-4 py-2 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 text-sm font-bold flex items-center gap-2 shadow-sm">
+                        <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
                         <span className="hidden sm:inline">SYSTEM NODE:</span> MASTER
                     </div>
                 </div>
@@ -107,49 +107,49 @@ export default async function SuperAdminDashboard() {
                     label="Active Events"
                     value={stats.totalEvents}
                     subtext="Live campsite nodes"
-                    icon={<GlobeIcon className="w-6 h-6 text-indigo-400" />}
-                    className="hover:shadow-[0_0_30px_rgba(129,140,248,0.15)] transition-all"
+                    icon={<GlobeIcon className="w-6 h-6 text-primary" />}
+                    className="hover:shadow-[0_0_30px_rgba(227,64,0,0.15)] transition-all bg-card border-border shadow-sm hover:translate-y-[-2px]"
                 />
                 <StatsCard
                     label="System Users"
                     value={stats.totalUsers}
                     subtext="All admin tiers"
-                    icon={<LockClosedIcon className="w-6 h-6 text-purple-400" />}
-                    className="hover:shadow-[0_0_30px_rgba(192,132,252,0.15)] transition-all"
+                    icon={<LockClosedIcon className="w-6 h-6 text-orange-600" />}
+                    className="hover:shadow-[0_0_30px_rgba(249,115,22,0.15)] transition-all bg-card border-border shadow-sm hover:translate-y-[-2px]"
                 />
                 <StatsCard
                     label="Global Bookings"
                     value={stats.totalBookings}
                     subtext="Historical & current"
-                    icon={<ClipboardIcon className="w-6 h-6 text-indigo-400" />}
-                    className="hover:shadow-[0_0_30_rgba(79,70,229,0.15)] transition-all"
+                    icon={<ClipboardIcon className="w-6 h-6 text-red-600" />}
+                    className="hover:shadow-[0_0_30px_rgba(220,38,38,0.15)] transition-all bg-card border-border shadow-sm hover:translate-y-[-2px]"
                 />
                 <StatsCard
                     label="Guest Network"
                     value={stats.totalGuests}
                     subtext="Verified identities"
-                    icon={<PersonIcon className="w-6 h-6 text-pink-400" />}
-                    className="hover:shadow-[0_0_30_rgba(236,72,153,0.15)] transition-all"
+                    icon={<PersonIcon className="w-6 h-6 text-primary" />}
+                    className="hover:shadow-[0_0_30px_rgba(227,64,0,0.15)] transition-all bg-card border-border shadow-sm hover:translate-y-[-2px]"
                 />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left: Performance & Distribution */}
                 <div className="lg:col-span-8 space-y-6 md:space-y-8">
-                    <div className="glass p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-white/5 bg-gradient-to-br from-white/[0.05] to-transparent shadow-2xl overflow-hidden">
+                    <div className="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-border shadow-sm overflow-hidden">
                         <div className="flex items-center justify-between mb-8">
                             <div>
-                                <h3 className="text-xl md:text-2xl font-bold text-white">Event Performance</h3>
-                                <p className="text-xs md:text-sm text-gray-500">Active bookings across all event nodes</p>
+                                <h3 className="text-xl md:text-2xl font-bold text-foreground">Event Performance</h3>
+                                <p className="text-xs md:text-sm text-muted-foreground">Active bookings across all event nodes</p>
                             </div>
-                            <div className="hidden sm:block text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1 rounded-full font-bold">NODE_ANALYTICS</div>
+                            <div className="hidden sm:block text-xs bg-orange-100 text-orange-700 border border-orange-200 px-3 py-1 rounded-full font-bold">NODE_ANALYTICS</div>
                         </div>
                         <div className="h-64 md:h-72 flex items-end overflow-x-auto custom-scrollbar pb-2">
                             <div className="min-w-[300px] w-full h-full flex items-end">
                                 {stats.eventPerformance.length > 0 ? (
                                     <BarChart data={stats.eventPerformance} height={250} />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center border border-dashed border-white/10 rounded-2xl text-gray-600 italic">
+                                    <div className="w-full h-full flex items-center justify-center border border-dashed border-border rounded-2xl text-muted-foreground italic bg-secondary/30">
                                         Awaiting node data...
                                     </div>
                                 )}
@@ -158,77 +158,77 @@ export default async function SuperAdminDashboard() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                        <div className="glass p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-white/5 flex flex-col items-center justify-between">
-                            <h4 className="text-[10px] md:text-sm font-bold text-gray-500 uppercase tracking-widest mb-6 w-full text-center">User Composition</h4>
+                        <div className="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-border shadow-sm flex flex-col items-center justify-between">
+                            <h4 className="text-[10px] md:text-sm font-bold text-muted-foreground uppercase tracking-widest mb-6 w-full text-center">User Composition</h4>
                             <div className="flex-1 flex items-center justify-center py-4">
                                 <DonutChart
                                     data={[
-                                        { label: 'Super', value: stats.userDistribution.superAdmins, color: '#A78BFA' },
-                                        { label: 'Event', value: stats.userDistribution.eventAdmins, color: '#6366F1' },
-                                        { label: 'Desk', value: stats.userDistribution.deskAdmins, color: '#EC4899' },
+                                        { label: 'Super', value: stats.userDistribution.superAdmins, color: '#e34000' },
+                                        { label: 'Event', value: stats.userDistribution.eventAdmins, color: '#ea580c' },
+                                        { label: 'Desk', value: stats.userDistribution.deskAdmins, color: '#f97316' },
                                     ]}
                                     size={160}
                                 />
                             </div>
-                            <div className="mt-6 text-center grid grid-cols-3 gap-4 w-full border-t border-white/5 pt-6">
+                            <div className="mt-6 text-center grid grid-cols-3 gap-4 w-full border-t border-border pt-6">
                                 <div>
-                                    <div className="text-lg font-black text-indigo-400">{stats.userDistribution.superAdmins}</div>
-                                    <div className="text-[9px] text-gray-600 font-black uppercase">SUPER</div>
+                                    <div className="text-lg font-black text-primary">{stats.userDistribution.superAdmins}</div>
+                                    <div className="text-[9px] text-muted-foreground font-black uppercase">SUPER</div>
                                 </div>
                                 <div>
-                                    <div className="text-lg font-black text-indigo-500">{stats.userDistribution.eventAdmins}</div>
-                                    <div className="text-[9px] text-gray-600 font-black uppercase">EVENT</div>
+                                    <div className="text-lg font-black text-orange-600">{stats.userDistribution.eventAdmins}</div>
+                                    <div className="text-[9px] text-muted-foreground font-black uppercase">EVENT</div>
                                 </div>
                                 <div>
-                                    <div className="text-lg font-black text-pink-500">{stats.userDistribution.deskAdmins}</div>
-                                    <div className="text-[9px] text-gray-600 font-black uppercase">DESK</div>
+                                    <div className="text-lg font-black text-red-600">{stats.userDistribution.deskAdmins}</div>
+                                    <div className="text-[9px] text-muted-foreground font-black uppercase">DESK</div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="glass p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-white/5 flex flex-col items-center justify-between">
-                            <h4 className="text-[10px] md:text-sm font-bold text-gray-500 uppercase tracking-widest mb-6 w-full text-center">Booking Lifecycle</h4>
+                        <div className="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-border shadow-sm flex flex-col items-center justify-between">
+                            <h4 className="text-[10px] md:text-sm font-bold text-muted-foreground uppercase tracking-widest mb-6 w-full text-center">Booking Lifecycle</h4>
                             <div className="flex-1 flex items-center justify-center py-4">
                                 <DonutChart
                                     data={stats.bookingStatusData}
                                     size={160}
                                 />
                             </div>
-                            <div className="mt-6 w-full border-t border-white/5 pt-6">
+                            <div className="mt-6 w-full border-t border-border pt-6">
                                 <div className="grid grid-cols-2 gap-y-2 gap-x-4">
                                     {stats.bookingStatusData.map(d => (
                                         <div key={d.label} className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: d.color }} />
-                                                <span className="text-[10px] text-gray-400 font-medium">{d.label}</span>
+                                                <span className="text-[10px] text-muted-foreground font-medium">{d.label}</span>
                                             </div>
-                                            <span className="text-[10px] text-white font-bold">{d.value}</span>
+                                            <span className="text-[10px] text-foreground font-bold">{d.value}</span>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                         </div>
 
-                        <div className="md:col-span-2 glass p-8 rounded-[2rem] border-white/5 space-y-4">
-                            <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Quick Operations</h4>
+                        <div className="md:col-span-2 bg-white p-8 rounded-[2rem] border border-border shadow-sm space-y-4">
+                            <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-4">Quick Operations</h4>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {[
-                                    { name: 'Deploy New Event', href: '/super-admin/events', icon: <GlobeIcon className="w-5 h-5" />, col: 'text-blue-400', desc: 'Initialize campsite node' },
-                                    { name: 'Audit User Access', href: '/super-admin/users', icon: <LockClosedIcon className="w-5 h-5" />, col: 'text-purple-400', desc: 'Revoke or grant perms' },
-                                    { name: 'System Announcements', href: '/super-admin/notifications', icon: <SpeakerLoudIcon className="w-5 h-5" />, col: 'text-indigo-400', desc: 'Push global broadcast' },
-                                    { name: 'Global Settings', href: '/super-admin/settings', icon: <GearIcon className="w-5 h-5" />, col: 'text-gray-400', desc: 'Platform configuration' }
+                                    { name: 'Deploy New Event', href: '/super-admin/events', icon: <GlobeIcon className="w-5 h-5" />, col: 'text-primary', desc: 'Initialize campsite node' },
+                                    { name: 'Audit User Access', href: '/super-admin/users', icon: <LockClosedIcon className="w-5 h-5" />, col: 'text-orange-600', desc: 'Revoke or grant perms' },
+                                    { name: 'System Announcements', href: '/super-admin/notifications', icon: <SpeakerLoudIcon className="w-5 h-5" />, col: 'text-red-500', desc: 'Push global broadcast' },
+                                    { name: 'Global Settings', href: '/super-admin/settings', icon: <GearIcon className="w-5 h-5" />, col: 'text-muted-foreground', desc: 'Platform configuration' }
                                 ].map((link) => (
-                                    <a key={link.name} href={link.href} className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all group">
+                                    <a key={link.name} href={link.href} className="flex items-center justify-between p-4 rounded-2xl bg-secondary hover:bg-orange-50 border border-border hover:border-primary/30 transition-all group shadow-sm">
                                         <div className="flex items-center gap-4">
-                                            <div className={`p-3 rounded-xl bg-white/5 group-hover:scale-110 transition-transform ${link.col}`}>
+                                            <div className={`p-3 rounded-xl bg-white shadow-sm group-hover:scale-110 transition-transform ${link.col}`}>
                                                 {link.icon}
                                             </div>
                                             <div>
-                                                <div className="font-bold text-gray-200 group-hover:text-white transition-colors">{link.name}</div>
-                                                <div className="text-[10px] text-gray-500">{link.desc}</div>
+                                                <div className="font-bold text-foreground transition-colors">{link.name}</div>
+                                                <div className="text-[10px] text-muted-foreground">{link.desc}</div>
                                             </div>
                                         </div>
-                                        <span className="text-gray-600 group-hover:translate-x-1 transition-transform pr-2">→</span>
+                                        <span className="text-muted-foreground group-hover:translate-x-1 transition-transform pr-2">→</span>
                                     </a>
                                 ))}
                             </div>
@@ -238,32 +238,32 @@ export default async function SuperAdminDashboard() {
 
                 {/* Right: Global Activity Feed */}
                 <div className="lg:col-span-4 flex flex-col gap-8">
-                    <div className="glass p-8 rounded-[2rem] border-white/5 bg-gradient-to-b from-white/[0.05] to-transparent shadow-2xl h-full flex flex-col">
+                    <div className="bg-white p-8 rounded-[2rem] border border-border shadow-sm h-full flex flex-col">
                         <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-2xl font-bold text-white">System Feed</h3>
-                            <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                            <h3 className="text-2xl font-bold text-foreground">System Feed</h3>
+                            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-primary">
                                 <LightningBoltIcon className="w-5 h-5 animate-pulse" />
                             </div>
                         </div>
 
                         <div className="space-y-6 flex-1">
                             {stats.recentLogs.map((log: any) => (
-                                <div key={log.id} className="relative pl-6 pb-2 border-l border-white/5 group">
-                                    <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-gray-800 border border-gray-700 group-hover:border-indigo-500 transition-colors"></div>
+                                <div key={log.id} className="relative pl-6 pb-2 border-l border-border group">
+                                    <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-secondary border border-border group-hover:border-primary transition-colors"></div>
                                     <div className="flex justify-between items-start mb-1 leading-none">
-                                        <span className="text-[10px] font-black text-indigo-400 uppercase tracking-tighter">{log.action}</span>
-                                        <span className="text-[10px] text-gray-600 font-mono italic">{formatDistanceToNow(new Date(log.createdAt), { addSuffix: true })}</span>
+                                        <span className="text-[10px] font-black text-primary uppercase tracking-tighter">{log.action}</span>
+                                        <span className="text-[10px] text-muted-foreground font-mono italic">{formatDistanceToNow(new Date(log.createdAt), { addSuffix: true })}</span>
                                     </div>
-                                    <p className="text-xs text-gray-400 line-clamp-2 mt-1 leading-relaxed">
+                                    <p className="text-xs text-muted-foreground line-clamp-2 mt-1 leading-relaxed">
                                         {log.details}
                                     </p>
-                                    <p className="text-[10px] text-gray-500 mt-2 font-medium">via {log.user.name || 'System'}</p>
+                                    <p className="text-[10px] text-muted-foreground mt-2 font-medium">via {log.user.name || 'System'}</p>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="mt-8 pt-6 border-t border-white/5">
-                            <a href="/super-admin/logs" className="block w-full text-center py-3 rounded-xl bg-white/5 hover:bg-indigo-500/10 text-[10px] font-black text-gray-500 hover:text-indigo-400 uppercase tracking-widest transition-all">
+                        <div className="mt-8 pt-6 border-t border-border">
+                            <a href="/super-admin/logs" className="block w-full text-center py-3 rounded-xl bg-primary text-white text-xs font-bold uppercase tracking-widest hover:bg-primary/90 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
                                 ACCESS GLOBAL ARCHIVE
                             </a>
                         </div>

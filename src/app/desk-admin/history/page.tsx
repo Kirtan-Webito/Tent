@@ -35,7 +35,7 @@ export default async function HistoryPage() {
             <div className="border border-border rounded-xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-white/5 text-gray-400 font-medium border-b border-border">
+                        <thead className="bg-secondary text-muted-foreground font-medium border-b border-border">
                             <tr>
                                 <th className="py-3 px-4">Booking ID</th>
                                 <th className="py-3 px-4">Guest</th>
@@ -49,16 +49,16 @@ export default async function HistoryPage() {
                         </thead>
                         <tbody className="divide-y divide-border">
                             {(bookings as any[]).map((booking) => (
-                                <tr key={booking.id} className="hover:bg-white/5 transition">
+                                <tr key={booking.id} className="hover:bg-secondary/30 transition-colors">
                                     <td className="py-3 px-4 font-mono text-xs">{booking.id.slice(0, 8)}...</td>
-                                    <td className="py-3 px-4 font-bold text-white">{booking.members[0]?.name || 'Unknown'}</td>
+                                    <td className="py-3 px-4 font-bold text-foreground">{booking.members[0]?.name || 'Unknown'}</td>
                                     <td className="py-3 px-4 font-medium">{booking.tent.name} <span className="text-gray-500 text-xs">({booking.tent.sector.name})</span></td>
                                     <td className="py-3 px-4 text-gray-400 text-xs">{booking.checkInDate ? new Date(booking.checkInDate).toLocaleDateString() : '-'}</td>
                                     <td className="py-3 px-4 text-gray-400 text-xs">{booking.checkOutDate ? new Date(booking.checkOutDate).toLocaleDateString() : '-'}</td>
                                     <td className="py-3 px-4">{booking.members.length} Members</td>
                                     <td className="py-3 px-4 text-gray-400">{booking.mobile || '-'}</td>
                                     <td className="py-3 px-4">
-                                        <span className="px-2 py-1 rounded-full text-xs font-bold bg-green-500/10 text-green-400 border border-green-500/20">
+                                        <span className="px-2 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
                                             {booking.status}
                                         </span>
                                     </td>

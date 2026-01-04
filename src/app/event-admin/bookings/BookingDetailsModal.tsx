@@ -25,7 +25,6 @@ interface Booking {
     status: string;
     mobile: string | null;
     notes: string | null;
-    isVIP: boolean;
     createdAt: Date;
 }
 
@@ -47,12 +46,10 @@ export default function BookingDetailsModal({
 }) {
     const [notes, setNotes] = useState<Note[]>([]);
     const [newNote, setNewNote] = useState('');
-    const [isVIP, setIsVIP] = useState(false);
     const [loadingNotes, setLoadingNotes] = useState(false);
 
     useEffect(() => {
         if (booking) {
-            setIsVIP(booking.isVIP);
             fetchNotes(booking.id);
         }
     }, [booking]);
@@ -94,23 +91,6 @@ export default function BookingDetailsModal({
         }
     };
 
-    const toggleVIP = async () => {
-        if (!booking) return;
-        const newStatus = !isVIP;
-        setIsVIP(newStatus); // Optimistic update
-
-        try {
-            await fetch('/api/bookings/vip', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ bookingId: booking.id, isVIP: newStatus })
-            });
-        } catch (error) {
-            setIsVIP(!newStatus); // Revert on error
-            console.error('Failed to toggle VIP:', error);
-        }
-    };
-
     if (!booking) return null;
 
     return (
@@ -118,152 +98,206 @@ export default function BookingDetailsModal({
             isOpen={isOpen}
             onClose={onClose}
             title="Booking Details"
+            maxWidth="max-w-4xl" // Wider modal for tablets
             actions={
                 <button
                     onClick={onClose}
-                    className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition"
+                    className="px-6 py-3 bg-secondary hover:bg-secondary/80 text-foreground font-bold rounded-xl transition shadow-sm active:scale-95"
                 >
                     Close
                 </button>
             }
         >
-            <div className="space-y-6">
-                {/* VIP Banner */}
-                <div className="flex items-center justify-between bg-white/5 rounded-xl p-4 border border-white/10">
-                    <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${isVIP ? 'bg-yellow-500/20 text-yellow-500' : 'bg-gray-500/20 text-gray-400'}`}>
-                            👑
+            <div className="space-y-4 sm:space-y-6">
+                {/* Header Status Bar - Shows on all screens */}
+                <div className="bg-white border border-border rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Tent</span>
+                            <h3 className="text-xl sm:text-2xl font-black text-foreground">{booking.tent.name}</h3>
                         </div>
-                        <div>
-                            <h3 className="font-bold text-white">VIP Status</h3>
-                            <p className="text-xs text-gray-500">Mark this booking as high priority</p>
-                        </div>
+                        <p className="text-xs text-muted-foreground font-mono mt-1">ID: #{booking.id.slice(0, 8)}</p>
                     </div>
-                    <button
-                        onClick={toggleVIP}
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isVIP ? 'bg-yellow-500' : 'bg-gray-700'}`}
-                    >
-                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isVIP ? 'translate-x-6' : 'translate-x-1'}`} />
-                    </button>
-                </div>
-
-                {/* Booking Info */}
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                    <h3 className="font-bold text-emerald-400 mb-3">Booking Information</h3>
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div>
-                            <span className="text-gray-500">Booking ID:</span>
-                            <p className="font-mono text-xs mt-1">#{booking.id.slice(0, 12)}...</p>
-                        </div>
-                        <div>
-                            <span className="text-gray-500">Tent:</span>
-                            <p className="font-bold mt-1">{booking.tent.name}</p>
-                        </div>
-                        <div>
-                            <span className="text-gray-500">Check-in:</span>
-                            <p className="mt-1">
-                                {booking.checkInDate ? new Date(booking.checkInDate).toLocaleDateString() : 'Not set'}
-                            </p>
-                        </div>
-                        <div>
-                            <span className="text-gray-500">Check-out:</span>
-                            <p className="mt-1">
-                                {booking.checkOutDate ? new Date(booking.checkOutDate).toLocaleDateString() : 'Not set'}
-                            </p>
-                        </div>
-                        <div>
-                            <span className="text-gray-500">Status:</span>
-                            <p className="mt-1">
-                                <span className={`px-2 py-1 rounded text-xs font-bold ${booking.status === 'CONFIRMED' ? 'bg-emerald-500/20 text-emerald-400' :
-                                    'bg-gray-500/20 text-gray-400'
-                                    }`}>
-                                    {booking.status}
-                                </span>
-                            </p>
-                        </div>
+                    <div className="flex items-center gap-3 self-start sm:self-auto">
+                        <span className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider shadow-sm ${booking.status === 'CONFIRMED' ? 'bg-emerald-500 text-white' :
+                            booking.status === 'PENDING' ? 'bg-orange-500 text-white' :
+                                'bg-secondary text-muted-foreground'
+                            }`}>
+                            {booking.status}
+                        </span>
                     </div>
                 </div>
 
-                {/* Guests List */}
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                    <h3 className="font-bold text-blue-400 mb-3">
-                        Guests ({booking.members.length})
-                    </h3>
-                    <div className="space-y-2">
-                        {booking.members.map((member, idx) => (
-                            <div
-                                key={member.id}
-                                className="flex items-center justify-between p-3 bg-black/20 rounded-lg"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
-                                        {member.name.charAt(0)}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    {/* Left Column: Key Details & Guests */}
+                    <div className="space-y-4 sm:space-y-6">
+                        {/* Dates & Contact */}
+                        <div className="bg-secondary/30 rounded-2xl p-4 md:p-5 border border-border">
+                            <div className="grid grid-cols-2 gap-3 md:gap-4 mb-4">
+                                <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-border/50">
+                                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                        <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider">Check-in</span>
                                     </div>
-                                    <div>
-                                        <p className="font-bold text-white">
-                                            {member.name}
-                                            {idx === 0 && (
-                                                <span className="ml-2 text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">
-                                                    Primary
-                                                </span>
-                                            )}
-                                        </p>
-                                        <p className="text-xs text-gray-400">
-                                            {member.age} yrs • {member.gender}
-                                            {member.contact && ` • ${member.contact}`}
-                                        </p>
+                                    <p className="text-base md:text-lg font-bold text-foreground">
+                                        {booking.checkInDate ? new Date(booking.checkInDate).toLocaleDateString('en-US', {
+                                            month: 'short', day: 'numeric'
+                                        }) : '--'}
+                                        <span className="text-xs text-muted-foreground font-normal ml-1 hidden sm:inline">
+                                            {booking.checkInDate ? new Date(booking.checkInDate).getFullYear() : ''}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm border border-border/50">
+                                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+                                        <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider">Check-out</span>
                                     </div>
+                                    <p className="text-base md:text-lg font-bold text-foreground">
+                                        {booking.checkOutDate ? new Date(booking.checkOutDate).toLocaleDateString('en-US', {
+                                            month: 'short', day: 'numeric'
+                                        }) : '--'}
+                                        <span className="text-xs text-muted-foreground font-normal ml-1 hidden sm:inline">
+                                            {booking.checkOutDate ? new Date(booking.checkOutDate).getFullYear() : ''}
+                                        </span>
+                                    </p>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                </div>
 
-                {/* Notes & History */}
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                    <h3 className="font-bold text-purple-400 mb-3">Notes & History</h3>
-
-                    {/* Add Note */}
-                    <div className="flex gap-2 mb-4">
-                        <input
-                            type="text"
-                            placeholder="Add a note..."
-                            value={newNote}
-                            onChange={(e) => setNewNote(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleAddNote()}
-                            className="flex-1 px-3 py-2 bg-black/20 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-purple-500/50"
-                        />
-                        <button
-                            onClick={handleAddNote}
-                            className="px-3 py-2 bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 rounded-lg text-sm font-bold transition"
-                        >
-                            Add
-                        </button>
-                    </div>
-
-                    {/* Notes List */}
-                    <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
-                        {loadingNotes ? (
-                            <div className="text-center text-gray-500 text-xs py-2">Loading notes...</div>
-                        ) : notes.length > 0 ? (
-                            notes.map((note) => (
-                                <div key={note.id} className="p-3 bg-black/20 rounded-lg text-sm">
-                                    <p className="text-gray-300">{note.content}</p>
-                                    <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
-                                        <span>{note.author}</span>
-                                        <span>{new Date(note.createdAt).toLocaleString()}</span>
+                            {booking.mobile ? (
+                                <div className="bg-white rounded-xl p-3 flex items-center justify-between shadow-sm border border-border/50">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                            <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] md:text-xs text-muted-foreground font-bold uppercase">Contact</p>
+                                            <p className="font-bold text-sm md:text-base text-foreground">{booking.mobile}</p>
+                                        </div>
                                     </div>
+                                    <a href={`tel:${booking.mobile}`} className="px-3 py-2 bg-secondary hover:bg-secondary/80 rounded-lg transition active:scale-95">
+                                        <span className="text-xs font-bold text-primary">Call</span>
+                                    </a>
                                 </div>
-                            ))
-                        ) : (
-                            <div className="text-center text-gray-500 text-xs py-4">No notes yet</div>
-                        )}
+                            ) : (
+                                <div className="text-center p-3 text-muted-foreground text-sm italic">No contact number provided</div>
+                            )}
+                        </div>
+
+                        {/* Guests List */}
+                        <div className="bg-white border border-border rounded-2xl p-4 md:p-5 shadow-sm max-h-[300px] md:max-h-[400px] overflow-y-auto custom-scrollbar">
+                            <div className="flex items-center justify-between mb-4 sticky top-0 bg-white py-2 z-10 border-b border-border/50">
+                                <h3 className="font-black text-foreground uppercase tracking-wide flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                                    Guests
+                                </h3>
+                                <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-black shadow-sm">
+                                    {booking.members.length}
+                                </span>
+                            </div>
+                            <div className="space-y-3">
+                                {booking.members.map((member, idx) => (
+                                    <div
+                                        key={member.id}
+                                        className="flex items-center gap-3 p-3 bg-secondary/30 hover:bg-secondary/60 rounded-xl border border-transparent hover:border-border transition-all"
+                                    >
+                                        <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white font-black text-lg md:text-xl shadow-sm shrink-0 ${idx === 0 ? 'bg-gradient-to-br from-primary to-orange-400' : 'bg-slate-300'
+                                            }`}>
+                                            {member.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <p className="font-bold text-foreground text-base md:text-lg truncate">{member.name}</p>
+                                                {idx === 0 && (
+                                                    <span className="px-2 py-0.5 bg-orange-100 text-orange-700 rounded-md text-[10px] font-black uppercase tracking-wider shrink-0">
+                                                        Primary
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs md:text-sm text-muted-foreground">
+                                                <span className="flex items-center gap-1">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                                                    {member.age} yrs
+                                                </span>
+                                                <span className="flex items-center gap-1">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                                                    {member.gender}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Column: Notes & History */}
+                    <div className="flex flex-col h-full bg-white border border-border rounded-2xl p-4 md:p-5 shadow-sm min-h-[350px] md:min-h-[500px]">
+                        <h3 className="font-black text-foreground uppercase tracking-wide mb-4 flex items-center gap-2">
+                            <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                            Notes & History
+                        </h3>
+
+                        {/* Notes List - Flex grow to fill space */}
+                        <div className="flex-1 mb-4 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-border scrollbar-track-secondary/50 space-y-3">
+                            {loadingNotes ? (
+                                <div className="h-full flex flex-col items-center justify-center text-muted-foreground gap-3">
+                                    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                                    <p className="text-sm font-medium">Loading history...</p>
+                                </div>
+                            ) : notes.length > 0 ? (
+                                notes.map((note) => (
+                                    <div key={note.id} className="p-3 md:p-4 bg-secondary/30 rounded-2xl border border-border/50 hover:border-border transition-colors group">
+                                        <p className="text-foreground text-sm leading-relaxed whitespace-pre-wrap">{note.content}</p>
+                                        <div className="flex justify-between items-center mt-3 pt-3 border-t border-border/10 text-[10px] md:text-xs text-muted-foreground">
+                                            <span className="font-bold bg-white px-2 py-1 rounded-md shadow-sm border border-border/20 text-primary">
+                                                {note.author}
+                                            </span>
+                                            <span>
+                                                {new Date(note.createdAt).toLocaleString('en-US', {
+                                                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                                                })}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="h-full flex flex-col items-center justify-center text-muted-foreground p-8 bg-secondary/10 rounded-2xl border-2 border-dashed border-border/50">
+                                    <span className="text-4xl mb-3 opacity-20">📝</span>
+                                    <p className="font-bold">No notes yet</p>
+                                    <p className="text-xs mt-1 text-center max-w-[200px]">Add a note below to track history or special requests.</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Add Note Input - Fixed at bottom */}
+                        <div className="pt-4 border-t border-border mt-auto">
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="Type a note..."
+                                    value={newNote}
+                                    onChange={(e) => setNewNote(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleAddNote()}
+                                    className="flex-1 px-4 py-3 bg-secondary border border-border rounded-xl text-sm md:text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition"
+                                />
+                                <button
+                                    onClick={handleAddNote}
+                                    disabled={!newNote.trim()}
+                                    className="px-4 md:px-6 py-3 bg-primary text-white hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl text-xs md:text-sm font-black uppercase tracking-wide transition shadow-lg shadow-primary/20 active:translate-y-0.5"
+                                >
+                                    Send
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                {/* Metadata */}
-                <div className="text-xs text-gray-500 text-center">
-                    Created on {new Date(booking.createdAt).toLocaleString()}
+                {/* Footer Metadata */}
+                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground font-medium py-2">
+                    <span>Created {new Date(booking.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    <span className="w-1 h-1 rounded-full bg-border" />
+                    <span>{new Date(booking.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
             </div>
         </Modal>

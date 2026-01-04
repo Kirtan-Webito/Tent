@@ -61,7 +61,7 @@ export default function AddDeskAdminButton({ eventId, sectors }: { eventId: stri
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className="group relative px-6 py-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 font-black uppercase tracking-widest text-xs hover:bg-purple-500 hover:text-white transition-all duration-300"
+                className="group relative px-6 py-3 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 font-black uppercase tracking-widest text-xs hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
             >
                 <span className="relative z-10 text-nowrap">+ Recruit Operator</span>
             </button>
@@ -75,7 +75,7 @@ export default function AddDeskAdminButton({ eventId, sectors }: { eventId: stri
                         <button
                             type="button"
                             onClick={() => setIsOpen(false)}
-                            className="flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all"
+                            className="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-secondary transition-all"
                         >
                             Abort
                         </button>
@@ -83,7 +83,7 @@ export default function AddDeskAdminButton({ eventId, sectors }: { eventId: stri
                             form="add-operator-form"
                             type="submit"
                             disabled={loading}
-                            className="flex-[2] py-3 rounded-xl bg-purple-500 text-white text-xs font-black uppercase tracking-widest hover:bg-purple-400 disabled:opacity-50 transition-all"
+                            className="flex-[2] btn-primary"
                         >
                             {loading ? 'Processing...' : 'Authorize Access'}
                         </button>
@@ -93,40 +93,40 @@ export default function AddDeskAdminButton({ eventId, sectors }: { eventId: stri
                 <form id="add-operator-form" onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Full Name</label>
-                            <input name="name" required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500/50 transition-colors" placeholder="e.g. Alex Rivera" />
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Full Name</label>
+                            <input name="name" required className="input-primary" placeholder="e.g. Alex Rivera" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Email Address</label>
-                            <input name="email" type="email" required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500/50 transition-colors" placeholder="alex@operations.tent" />
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Email Address</label>
+                            <input name="email" type="email" required className="input-primary" placeholder="alex@operations.tent" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Temporary Password</label>
-                            <input name="password" type="password" required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500/50 transition-colors" placeholder="••••••••" />
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Temporary Password</label>
+                            <input name="password" type="password" required className="input-primary" placeholder="••••••••" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Assigned Operational Zones</label>
-                            <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-black/20 rounded-xl border border-white/5">
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3">Assigned Operational Zones</label>
+                            <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-secondary/50 rounded-xl border border-border">
                                 {sectors.map(sector => (
                                     <div
                                         key={sector.id}
                                         onClick={() => toggleSector(sector.id)}
                                         className={`flex items-center gap-2 p-2.5 rounded-lg cursor-pointer transition-all border ${selectedSectorIds.includes(sector.id)
-                                            ? 'bg-purple-500/20 border-purple-500/40 text-white'
-                                            : 'bg-white/5 border-transparent text-gray-500 hover:bg-white/10'
+                                            ? 'bg-orange-100 border-orange-300 text-orange-800'
+                                            : 'bg-white border-transparent text-muted-foreground hover:bg-white/80'
                                             }`}
                                     >
                                         <div className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition-all ${selectedSectorIds.includes(sector.id)
-                                            ? 'bg-purple-500 border-purple-500'
-                                            : 'bg-transparent border-gray-600'
+                                            ? 'bg-primary border-primary'
+                                            : 'bg-transparent border-input'
                                             }`}>
-                                            {selectedSectorIds.includes(sector.id) && <span className="text-[8px]">✓</span>}
+                                            {selectedSectorIds.includes(sector.id) && <span className="text-[8px] text-white">✓</span>}
                                         </div>
                                         <span className="text-[11px] font-bold truncate">{sector.name}</span>
                                     </div>
                                 ))}
                             </div>
-                            <p className="mt-2 text-[10px] text-gray-600 italic">{selectedSectorIds.length} sectors selected</p>
+                            <p className="mt-2 text-[10px] text-muted-foreground italic">{selectedSectorIds.length} sectors selected</p>
                         </div>
                     </div>
                 </form>

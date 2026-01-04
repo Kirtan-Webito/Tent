@@ -68,7 +68,7 @@ export default function EditEventAdminButton({
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className="px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-black text-[10px] uppercase tracking-widest hover:bg-cyan-500 hover:text-white transition-all active:scale-95"
+                className="px-3 py-1.5 rounded-lg bg-orange-100 border border-orange-200 text-orange-700 font-bold text-[10px] uppercase tracking-widest hover:bg-orange-200 transition-all active:scale-95 shadow-sm"
             >
                 Edit
             </button>
@@ -82,7 +82,7 @@ export default function EditEventAdminButton({
                         <button
                             type="button"
                             onClick={() => setIsOpen(false)}
-                            className="flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all"
+                            className="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-secondary transition-all"
                         >
                             Cancel
                         </button>
@@ -90,7 +90,7 @@ export default function EditEventAdminButton({
                             form="edit-event-admin-form"
                             type="submit"
                             disabled={loading}
-                            className="flex-[2] py-3 rounded-xl bg-cyan-500 text-white text-xs font-black uppercase tracking-widest hover:bg-cyan-400 disabled:opacity-50 transition-all"
+                            className="flex-[2] btn-primary"
                         >
                             {loading ? 'Saving...' : 'Update Admin'}
                         </button>
@@ -100,23 +100,23 @@ export default function EditEventAdminButton({
                 <form id="edit-event-admin-form" onSubmit={handleSubmit} className="space-y-6 text-left">
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Administrator Name</label>
-                            <input name="name" defaultValue={user.name || ''} required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-colors" placeholder="e.g. Alex Rivera" />
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Administrator Name</label>
+                            <input name="name" defaultValue={user.name || ''} required className="input-primary" placeholder="e.g. Alex Rivera" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Connectivity Email</label>
-                            <input name="email" type="email" defaultValue={user.email} required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-colors" placeholder="alex@operations.tent" />
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Connectivity Email</label>
+                            <input name="email" type="email" defaultValue={user.email} required className="input-primary" placeholder="alex@operations.tent" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Update Password (optional)</label>
-                            <input name="password" type="password" className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-colors" placeholder="••••••••" />
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Update Password (optional)</label>
+                            <input name="password" type="password" className="input-primary" placeholder="••••••••" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Relocate to Deployment Node</label>
-                            <select name="eventId" defaultValue={user.assignedEventId || ''} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-colors appearance-none">
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Relocate to Deployment Node</label>
+                            <select name="eventId" defaultValue={user.assignedEventId || ''} className="input-primary appearance-none">
                                 <option value="">-- No Node Assignment --</option>
                                 {events.map(event => (
-                                    <option key={event.id} value={event.id} className="bg-[#0f0f12] text-white">{event.name}</option>
+                                    <option key={event.id} value={event.id} className="text-foreground">{event.name}</option>
                                 ))}
                             </select>
                         </div>

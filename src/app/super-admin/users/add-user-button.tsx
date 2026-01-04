@@ -48,7 +48,7 @@ export default function AddUserButton({ events }: { events: { id: string, name: 
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className="group relative px-6 py-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-black uppercase tracking-widest text-xs hover:bg-cyan-500 hover:text-white transition-all duration-300"
+                className="group relative px-6 py-3 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 font-bold uppercase tracking-widest text-xs hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
             >
                 <span className="relative z-10 text-nowrap">+ Create Admin</span>
             </button>
@@ -62,7 +62,7 @@ export default function AddUserButton({ events }: { events: { id: string, name: 
                         <button
                             type="button"
                             onClick={() => setIsOpen(false)}
-                            className="flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all"
+                            className="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-secondary transition-all"
                         >
                             Cancel
                         </button>
@@ -70,7 +70,7 @@ export default function AddUserButton({ events }: { events: { id: string, name: 
                             form="add-event-admin-form"
                             type="submit"
                             disabled={loading}
-                            className="flex-[2] py-3 rounded-xl bg-cyan-500 text-white text-xs font-black uppercase tracking-widest hover:bg-cyan-400 disabled:opacity-50 transition-all"
+                            className="flex-[2] btn-primary"
                         >
                             {loading ? 'Creating...' : 'Create Admin'}
                         </button>
@@ -80,23 +80,23 @@ export default function AddUserButton({ events }: { events: { id: string, name: 
                 <form id="add-event-admin-form" onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Full Name</label>
-                            <input name="name" required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-colors" placeholder="e.g. John Doe" />
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Full Name</label>
+                            <input name="name" required className="input-primary" placeholder="e.g. John Doe" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Email Address</label>
-                            <input name="email" type="email" required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-colors" placeholder="manager@tent.com" />
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Email Address</label>
+                            <input name="email" type="email" required className="input-primary" placeholder="manager@tent.com" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Password</label>
-                            <input name="password" type="password" required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-colors" placeholder="••••••••" />
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Password</label>
+                            <input name="password" type="password" required className="input-primary" placeholder="••••••••" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Assign Event</label>
-                            <select name="eventId" className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500/50 transition-colors appearance-none">
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Assign Event</label>
+                            <select name="eventId" className="input-primary appearance-none">
                                 <option value="">-- Select Event --</option>
                                 {events.map(event => (
-                                    <option key={event.id} value={event.id} className="bg-[#0f0f12] text-white">{event.name}</option>
+                                    <option key={event.id} value={event.id} className="text-foreground">{event.name}</option>
                                 ))}
                             </select>
                         </div>

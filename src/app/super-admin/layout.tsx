@@ -34,8 +34,8 @@ export default function SuperAdminLayout({
     return (
         <div className="flex h-screen bg-background text-foreground overflow-hidden font-sans">
             <Sidebar
-                title="Super Admin"
-                subtitle="System"
+                title="Tent System"
+                subtitle="Super Admin"
                 icon={<GlobeIcon className="w-6 h-6" />}
                 color="primary"
                 navItems={navItems}
@@ -43,7 +43,7 @@ export default function SuperAdminLayout({
                 onClose={() => setIsSidebarOpen(false)}
             />
 
-            <main className="flex-1 overflow-auto relative bg-gradient-to-br from-background to-black">
+            <main className="flex-1 overflow-auto relative bg-gradient-to-br from-background to-secondary/30">
                 {/* Decorative Background Elements */}
                 <div className="fixed top-[-20%] right-[-10%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -52,12 +52,12 @@ export default function SuperAdminLayout({
                         {/* Mobile Toggle */}
                         <button
                             onClick={() => setIsSidebarOpen(true)}
-                            className="lg:hidden p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 active:scale-95 transition-all outline-none"
+                            className="lg:hidden p-3 bg-white border border-input rounded-xl hover:bg-secondary active:scale-95 transition-all outline-none"
                         >
-                            <HamburgerMenuIcon className="w-5 h-5" />
+                            <HamburgerMenuIcon className="w-5 h-5 text-foreground" />
                         </button>
 
-                        <div className="flex-1 glass px-4 md:px-6 py-2 rounded-xl border-white/5 shadow-2xl relative">
+                        <div className="flex-1 glass px-4 md:px-6 py-2 rounded-xl border-border/50 shadow-sm relative">
                             <GlobalSearchBar />
                         </div>
                         <NotificationBell />

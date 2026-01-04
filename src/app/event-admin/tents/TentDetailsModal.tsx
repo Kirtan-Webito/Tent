@@ -78,19 +78,20 @@ export default function TentDetailsModal({
             isOpen={isOpen}
             onClose={onClose}
             title={`Tent ${tent.name}`}
+            maxWidth="max-w-4xl"
             actions={
                 <div className="flex justify-between w-full">
                     <button
                         onClick={handleDelete}
                         disabled={loading || !!tent.currentBooking}
-                        className="px-4 py-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg transition disabled:opacity-30 disabled:hover:bg-red-500/10 disabled:hover:text-red-500"
+                        className="px-6 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-xl transition disabled:opacity-30 disabled:hover:bg-red-50 active:scale-95"
                         title={tent.currentBooking ? "Cannot delete occupied tent" : "Delete Tent"}
                     >
                         {loading ? 'Deleting...' : 'Delete Tent'}
                     </button>
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition"
+                        className="px-6 py-3 bg-secondary hover:bg-secondary/80 text-foreground font-bold rounded-xl transition border border-border shadow-sm active:scale-95"
                     >
                         Close
                     </button>
@@ -98,103 +99,90 @@ export default function TentDetailsModal({
             }
         >
             <div className="space-y-6">
-                {/* Tent Information */}
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                    <h3 className="font-bold text-emerald-400 mb-3">Tent Information</h3>
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div>
-                            <span className="text-gray-500">Tent Name:</span>
-                            <p className="font-bold text-lg mt-1">{tent.name}</p>
+                {/* Tent Status Header */}
+                <div className="bg-white border border-border rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm ${tent.status === 'Available' ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600'}`}>
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
                         </div>
                         <div>
-                            <span className="text-gray-500">Sector:</span>
-                            <p className="font-bold text-lg mt-1">{tent.sector.name}</p>
+                            <h3 className="text-2xl font-black text-foreground uppercase tracking-tight">{tent.name}</h3>
+                            <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">{tent.sector.name} Sector</p>
                         </div>
-                        <div>
-                            <span className="text-gray-500">Capacity:</span>
-                            <p className="mt-1">{tent.capacity} persons</p>
-                        </div>
-                        <div>
-                            <span className="text-gray-500">Status:</span>
-                            <p className="mt-1">
-                                <span className={`px-2 py-1 rounded text-xs font-bold ${tent.status === 'Available' ? 'bg-emerald-500/20 text-emerald-400' :
-                                    'bg-blue-500/20 text-blue-400'
-                                    }`}>
-                                    {tent.status}
-                                </span>
-                            </p>
-                        </div>
+                    </div>
+                    <div className={`px-4 py-2 rounded-xl text-sm font-black uppercase tracking-widest shadow-sm border ${tent.status === 'Available' ? 'bg-emerald-500 text-white border-emerald-600' : 'bg-orange-500 text-white border-orange-600'}`}>
+                        {tent.status}
                     </div>
                 </div>
 
-                {/* Current Occupants */}
-                {tent.currentBooking ? (
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                        <h3 className="font-bold text-blue-400 mb-3">
-                            Current Occupants ({tent.currentBooking.members.length})
-                        </h3>
-
-                        <div className="mb-4 p-3 bg-black/20 rounded-lg">
-                            <div className="grid grid-cols-2 gap-2 text-sm">
-                                <div>
-                                    <span className="text-gray-500">Check-in:</span>
-                                    <p className="font-medium">
-                                        {tent.currentBooking.checkInDate
-                                            ? new Date(tent.currentBooking.checkInDate).toLocaleDateString()
-                                            : 'Not set'}
-                                    </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {/* Left: General Info */}
+                    <div className="space-y-4">
+                        <div className="bg-secondary/30 rounded-2xl p-5 border border-border h-full">
+                            <h4 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] mb-4">Specifications</h4>
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="bg-white rounded-xl p-4 shadow-sm border border-border/50 flex items-center justify-between">
+                                    <span className="text-sm font-bold text-muted-foreground">Capacity</span>
+                                    <span className="text-lg font-black text-primary">{tent.capacity} Persons</span>
                                 </div>
-                                <div>
-                                    <span className="text-gray-500">Check-out:</span>
-                                    <p className="font-medium">
-                                        {tent.currentBooking.checkOutDate
-                                            ? new Date(tent.currentBooking.checkOutDate).toLocaleDateString()
-                                            : 'Not set'}
-                                    </p>
+                                <div className="bg-white rounded-xl p-4 shadow-sm border border-border/50 flex items-center justify-between">
+                                    <span className="text-sm font-bold text-muted-foreground">Occupancy Status</span>
+                                    <span className={`text-sm font-black uppercase tracking-tighter ${tent.status === 'Available' ? 'text-emerald-600' : 'text-orange-600'}`}>
+                                        {tent.status === 'Available' ? 'Free to Book' : 'Currently Occupied'}
+                                    </span>
                                 </div>
-                                {tent.currentBooking.mobile && (
-                                    <div className="col-span-2">
-                                        <span className="text-gray-500">Contact:</span>
-                                        <p className="font-medium">{tent.currentBooking.mobile}</p>
-                                    </div>
-                                )}
                             </div>
                         </div>
+                    </div>
 
-                        <div className="space-y-2">
-                            {tent.currentBooking.members.map((member, idx) => (
-                                <div
-                                    key={member.id}
-                                    className="flex items-center gap-3 p-3 bg-black/20 rounded-lg"
-                                >
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold">
-                                        {member.name.charAt(0)}
+                    {/* Right: Occupancy/Action */}
+                    <div className="space-y-4">
+                        {tent.currentBooking ? (
+                            <div className="bg-white border border-border rounded-2xl p-5 shadow-sm h-full">
+                                <h4 className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-4">Current Booking</h4>
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between p-3 bg-secondary/50 rounded-xl border border-border/50">
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black uppercase text-muted-foreground">Dates</span>
+                                            <span className="text-sm font-bold text-foreground">
+                                                {tent.currentBooking.checkInDate ? new Date(tent.currentBooking.checkInDate).toLocaleDateString() : 'N/A'} - {tent.currentBooking.checkOutDate ? new Date(tent.currentBooking.checkOutDate).toLocaleDateString() : 'N/A'}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="flex-1">
-                                        <p className="font-bold text-white">
-                                            {member.name}
-                                            {idx === 0 && (
-                                                <span className="ml-2 text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">
-                                                    Primary
-                                                </span>
-                                            )}
-                                        </p>
-                                        <p className="text-xs text-gray-400">
-                                            {member.age} yrs • {member.gender}
-                                            {member.contact && ` • ${member.contact}`}
-                                        </p>
+
+                                    <div className="space-y-2 max-h-[200px] overflow-y-auto custom-scrollbar pr-1">
+                                        {tent.currentBooking.members.map((member, idx) => (
+                                            <div key={member.id} className="flex items-center gap-3 p-3 bg-card border border-border rounded-xl shadow-sm hover:border-primary/30 transition-colors">
+                                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                                                    {member.name.charAt(0)}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-bold text-foreground text-sm truncate">{member.name}</p>
+                                                    <p className="text-[10px] text-muted-foreground uppercase font-medium">
+                                                        {member.age} Y • {member.gender}
+                                                    </p>
+                                                </div>
+                                                {idx === 0 && <span className="text-[8px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded font-black uppercase">Host</span>}
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ) : (
+                            <div className="bg-emerald-50/50 rounded-2xl p-8 border border-emerald-100 text-center flex flex-col items-center justify-center h-full">
+                                <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-4 shadow-sm border border-emerald-200">
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <p className="text-emerald-700 font-black text-xl uppercase tracking-tight">Available</p>
+                                <p className="text-xs text-emerald-600/70 mt-2 font-medium">This tent is ready for new guest check-ins.</p>
+                            </div>
+                        )}
                     </div>
-                ) : (
-                    <div className="bg-emerald-500/10 rounded-xl p-6 border border-emerald-500/20 text-center">
-                        <div className="text-4xl mb-2">✨</div>
-                        <p className="text-emerald-400 font-bold">Tent Available</p>
-                        <p className="text-sm text-gray-400 mt-1">No current occupants</p>
-                    </div>
-                )}
+                </div>
             </div>
         </Modal>
     );

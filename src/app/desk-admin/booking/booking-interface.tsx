@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from '@/components/ui/Modal';
 import StatsCard from '@/components/ui/StatsCard';
+import { CubeIcon } from '@radix-ui/react-icons';
 
 type Member = {
     id: string;
@@ -367,16 +368,16 @@ export default function BookingInterface({ sectors }: { sectors: Sector[] }) {
                 {/* Left Panel: Navigation & Tent Selection */}
                 <div className="lg:col-span-4 space-y-6">
                     {/* Sector List */}
-                    <div className="glass rounded-2xl p-6">
-                        <h3 className="text-lg font-bold text-white mb-4">1. Select Sector</h3>
+                    <div className="bg-white rounded-2xl p-6 border border-border shadow-sm">
+                        <h3 className="text-lg font-bold text-foreground mb-4">1. Select Sector</h3>
                         <div className="space-y-2">
                             {sectors.map(sector => (
                                 <button
                                     key={sector.id}
                                     onClick={() => { setSelectedSectorId(sector.id); setSelectedTentId(''); }}
                                     className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex justify-between items-center group ${selectedSectorId === sector.id
-                                        ? 'bg-primary/20 border-primary text-white shadow-[0_0_15px_rgba(124,58,237,0.3)]'
-                                        : 'bg-white/5 border-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                                        ? 'bg-primary/20 border-primary text-primary shadow-sm'
+                                        : 'bg-card border-border text-muted-foreground hover:bg-secondary hover:text-foreground'
                                         }`}
                                 >
                                     <span className="font-medium">{sector.name}</span>
@@ -390,8 +391,8 @@ export default function BookingInterface({ sectors }: { sectors: Sector[] }) {
 
                     {/* Tent Grid */}
                     {selectedSector && (
-                        <div className="glass rounded-2xl p-6 animate-in slide-in-from-left-4 duration-300">
-                            <h3 className="text-lg font-bold text-white mb-4">2. Select Tent</h3>
+                        <div className="bg-white rounded-2xl p-6 animate-in slide-in-from-left-4 duration-300 border border-border shadow-sm">
+                            <h3 className="text-lg font-bold text-foreground mb-4">2. Select Tent</h3>
                             <div className="grid grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                                 {selectedSector.tents.map(tent => {
                                     const percent = Math.min((tent.occupied / tent.capacity) * 100, 100);
@@ -404,7 +405,7 @@ export default function BookingInterface({ sectors }: { sectors: Sector[] }) {
                                             onClick={() => setSelectedTentId(tent.id)}
                                             className={`p-3 rounded-xl border text-left transition-all relative overflow-hidden group ${isSelected
                                                 ? 'bg-primary text-white border-primary shadow-lg'
-                                                : 'bg-white/5 border-white/5 hover:border-white/20'
+                                                : 'bg-card border-border hover:border-primary/50'
                                                 }`}
                                         >
                                             <div className="relative z-10">
@@ -417,7 +418,7 @@ export default function BookingInterface({ sectors }: { sectors: Sector[] }) {
 
                                             {/* Progress Bar Background */}
                                             <div
-                                                className={`absolute bottom-0 left-0 h-1 transition-all duration-500 ${isFull ? 'bg-red-500' : 'bg-green-500'}`}
+                                                className={`absolute bottom-0 left-0 h-1 transition-all duration-500 ${isFull ? 'bg-red-500' : 'bg-primary'}`}
                                                 style={{ width: `${percent}%` }}
                                             />
                                         </button>
@@ -431,15 +432,15 @@ export default function BookingInterface({ sectors }: { sectors: Sector[] }) {
                 {/* Right Panel: Booking Form & Details */}
                 <div className="lg:col-span-8">
                     {selectedTent ? (
-                        <div className="glass rounded-2xl p-8 animate-in slide-in-from-right-4 duration-300 border border-white/10">
-                            <div className="flex justify-between items-start mb-8 pb-6 border-b border-white/10">
+                        <div className="bg-white rounded-2xl p-8 animate-in slide-in-from-right-4 duration-300 border border-border shadow-sm">
+                            <div className="flex justify-between items-start mb-8 pb-6 border-b border-border">
                                 <div>
-                                    <h2 className="text-3xl font-bold text-white text-gradient">Booking: {selectedTent.name}</h2>
+                                    <h2 className="text-3xl font-bold text-foreground text-gradient">Booking: {selectedTent.name}</h2>
                                     <p className="text-gray-400 mt-1">Manage occupants for this tent</p>
                                 </div>
                                 <div className={`px-4 py-2 rounded-full text-xs font-bold tracking-wide border ${selectedTent.occupied >= selectedTent.capacity
-                                    ? 'bg-red-500/20 text-red-200 border-red-500/50'
-                                    : 'bg-green-500/20 text-green-200 border-green-500/50'
+                                    ? 'bg-red-100 text-red-700 border-red-200'
+                                    : 'bg-emerald-100 text-emerald-700 border-emerald-200'
                                     }`}>
                                     {selectedTent.occupied >= selectedTent.capacity ? 'MAX CAPACITY' : 'AVAILABLE'}
                                 </div>
@@ -456,9 +457,9 @@ export default function BookingInterface({ sectors }: { sectors: Sector[] }) {
                                             .map((member) => {
                                                 const isOverdue = member.booking.checkOutDate && new Date(member.booking.checkOutDate) < new Date();
                                                 return (
-                                                    <div key={member.id} className={`flex justify-between items-center p-3 rounded-xl border transition-all ${isOverdue ? 'bg-red-500/10 border-red-500/40' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}>
+                                                    <div key={member.id} className={`flex justify-between items-center p-3 rounded-xl border transition-all ${isOverdue ? 'bg-red-500/10 border-red-500/20' : 'bg-secondary border-border hover:bg-secondary/80'}`}>
                                                         <div>
-                                                            <div className="font-bold text-white flex items-center gap-2">
+                                                            <div className="font-bold text-foreground flex items-center gap-2">
                                                                 {member.name}
                                                                 {isOverdue && <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-sm">OVERDUE</span>}
                                                             </div>
@@ -469,13 +470,13 @@ export default function BookingInterface({ sectors }: { sectors: Sector[] }) {
                                                         <div className="flex gap-2">
                                                             <button
                                                                 onClick={() => handleExtend(member.booking.id)}
-                                                                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500/20 transition"
+                                                                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition"
                                                             >
                                                                 Extend
                                                             </button>
                                                             <button
                                                                 onClick={() => handleCheckout(member.booking.id)}
-                                                                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition"
+                                                                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-100 text-red-700 border border-red-200 hover:bg-red-200 transition"
                                                             >
                                                                 Check Out
                                                             </button>
@@ -626,7 +627,7 @@ export default function BookingInterface({ sectors }: { sectors: Sector[] }) {
                     ) : (
                         <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-gray-500 border border-dashed border-white/10 rounded-2xl bg-white/[0.02]">
                             <div className="p-4 rounded-full bg-white/5 mb-4">
-                                <span className="text-4xl opacity-50">⛺</span>
+                                <CubeIcon className="w-12 h-12 opacity-50" />
                             </div>
                             <p className="font-medium text-lg">No Tent Selected</p>
                             <p className="text-sm opacity-60">Choose a sector and tent from the left to begin.</p>

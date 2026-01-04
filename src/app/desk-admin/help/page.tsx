@@ -29,7 +29,7 @@ export default async function DeskAdminHelpPage() {
 
             {/* Emergency Contacts */}
             <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                <h2 className="text-xl font-bold text-white mb-4">🚨 Emergency Contacts</h2>
+                <h2 className="text-xl font-bold text-foreground mb-4">🚨 Emergency Contacts</h2>
 
                 {contacts.length === 0 ? (
                     <p className="text-center text-gray-500 py-8">No emergency contacts available. Contact your Event Admin.</p>
@@ -38,7 +38,7 @@ export default async function DeskAdminHelpPage() {
                         {contacts.map(contact => (
                             <div key={contact.id} className="p-4 bg-gradient-to-br from-red-500/10 to-orange-500/5 border border-red-500/20 rounded-xl">
                                 <div className="text-sm text-gray-400 mb-1">{contact.title}</div>
-                                <div className="font-bold text-white text-lg mb-2">{contact.name}</div>
+                                <div className="font-bold text-foreground text-lg mb-2">{contact.name}</div>
                                 <a
                                     href={`tel:${contact.phone}`}
                                     className="inline-block px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition text-sm font-medium"
@@ -54,7 +54,7 @@ export default async function DeskAdminHelpPage() {
 
             {/* SOPs */}
             <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                <h2 className="text-xl font-bold text-white mb-4">📋 Quick Rules (SOP)</h2>
+                <h2 className="text-xl font-bold text-foreground mb-4">📋 Quick Rules (SOP)</h2>
 
                 {sops.length === 0 ? (
                     <p className="text-center text-gray-500 py-8">No SOPs available. Contact your Event Admin.</p>

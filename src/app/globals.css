@@ -34,66 +34,76 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+
+  /* Fonts */
+  --font-sans: var(--font-inter), var(--font-roboto), var(--font-open-sans), var(--font-montserrat), var(--font-lato), ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
-  /* HSL Color Space for easy manipulation */
-  --hue: 250;
-  /* Deep Indigo/Purple base */
+  /* HSL Color Space */
+  /* Background: #fff5f0 -> 20 100% 97% */
+  --background: 20 100% 97%;
+  /* Foreground/Text: #a12b00 -> 16 100% 32% */
+  --foreground: 16 100% 32%;
 
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
+  /* Card: White */
+  --card: 0 0% 100%;
+  --card-foreground: 16 100% 32%;
 
-  --card: 240 10% 5%;
-  --card-foreground: 0 0% 98%;
+  /* Popover: White */
+  --popover: 0 0% 100%;
+  --popover-foreground: 16 100% 32%;
 
-  --popover: 240 10% 4%;
-  --popover-foreground: 0 0% 98%;
-
-  --primary: 252 100% 64%;
-  /* Vibrant Purple */
+  /* Primary: #e34000 -> 17 100% 45% */
+  --primary: 17 100% 45%;
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 240 4% 16%;
-  --secondary-foreground: 0 0% 98%;
+  /* Secondary: Light Peach/Beige */
+  --secondary: 20 50% 95%;
+  --secondary-foreground: 17 100% 45%;
 
-  --muted: 240 4% 16%;
-  --muted-foreground: 240 5% 65%;
+  /* Muted: Grayish/Peach */
+  --muted: 20 30% 90%;
+  --muted-foreground: 16 40% 50%;
 
-  --accent: 252 100% 64%;
-  --accent-foreground: 0 0% 98%;
+  /* Accent: Light Orange for hovers */
+  --accent: 17 100% 90%;
+  --accent-foreground: 17 100% 45%;
 
-  --destructive: 0 63% 31%;
+  /* Destructive */
+  --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 240 4% 16%;
-  --input: 240 4% 16%;
-  --ring: 252 100% 64%;
+  /* Border/Input */
+  --border: 20 20% 85%;
+  --input: 20 20% 85%;
+  --ring: 17 100% 45%;
 
   --radius: 0.75rem;
 }
 
 @layer base {
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased font-sans;
+    /* Subtle warm gradient background */
     background-image:
-      radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.08), transparent 25%),
-      radial-gradient(circle at 85% 30%, rgba(124, 58, 237, 0.08), transparent 25%);
+      radial-gradient(circle at 15% 50%, rgba(227, 64, 0, 0.03), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(227, 64, 0, 0.05), transparent 25%);
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer components {
   .glass {
-    @apply bg-white/[0.03] backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/40;
+    @apply bg-white/90 backdrop-blur-md border border-white/20 shadow-lg;
   }
 
   .text-gradient {
-    @apply bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent;
+    @apply bg-gradient-to-br from-primary to-orange-500 bg-clip-text text-transparent;
   }
 
   .btn-primary {
-    @apply relative inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white transition-all hover:bg-primary/90 hover:shadow-[0_0_20px_#7c3aed4d] hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-50;
+    @apply relative inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white transition-all hover:bg-primary/90 hover:shadow-[0_0_20px_hsl(var(--primary)/0.3)] hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-50;
   }
 
   .btn-secondary {
@@ -101,11 +111,11 @@
   }
 
   .input-primary {
-    @apply flex h-10 w-full rounded-xl border border-input bg-black/20 px-3 py-2 text-sm shadow-sm transition-all placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent hover:border-primary/50;
+    @apply flex h-10 w-full rounded-xl border border-input bg-white/50 px-3 py-2 text-sm shadow-sm transition-all placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent hover:border-primary/50;
   }
 
   .card-premium {
-    @apply rounded-xl border border-white/5 bg-gradient-to-b from-white/[0.05] to-transparent p-6 shadow-xl hover:border-white/10 transition-all duration-300;
+    @apply rounded-xl border border-white/20 bg-gradient-to-b from-white/80 to-white/40 p-6 shadow-xl hover:border-primary/20 transition-all duration-300;
   }
 }
 

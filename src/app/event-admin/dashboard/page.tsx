@@ -66,8 +66,8 @@ async function getStats(eventId: string) {
         }, 0);
         const sectorCapacity = s.tents.reduce((acc: number, t: any) => acc + t.capacity, 0);
 
-        // Rotating premium colors
-        const colors = ['bg-indigo-500', 'bg-emerald-500', 'bg-cyan-500', 'bg-purple-500', 'bg-pink-500', 'bg-amber-500'];
+        // Rotating premium colors - using warmer tones for the new theme
+        const colors = ['bg-orange-500', 'bg-red-500', 'bg-amber-500', 'bg-yellow-500', 'bg-rose-500', 'bg-pink-500'];
 
         return {
             label: s.name,
@@ -126,18 +126,18 @@ export default async function DashboardPage() {
             {/* Header section with glass effect preview */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-4">
                 <div>
-                    <h2 className="text-3xl md:text-4xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                    <h2 className="text-3xl md:text-4xl font-black tracking-tight bg-gradient-to-r from-primary via-orange-500 to-red-600 bg-clip-text text-transparent">
                         Command Center
                     </h2>
-                    <p className="text-sm md:text-base text-gray-400 mt-1 font-medium italic">Empowering your event operations with real-time intelligence.</p>
+                    <p className="text-sm md:text-base text-muted-foreground mt-1 font-medium italic">Empowering your event operations with real-time intelligence.</p>
                 </div>
                 <div className="flex items-center gap-3 md:gap-4">
-                    <div className="flex flex-col items-start md:items-end px-4 border-l md:border-l-0 md:border-r border-white/10">
-                        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest leading-none">Status</span>
-                        <span className="text-xs font-bold text-white uppercase tracking-tighter mt-1">OPERATIONAL</span>
+                    <div className="flex flex-col items-start md:items-end px-4 border-l md:border-l-0 md:border-r border-border/50">
+                        <span className="text-[10px] font-black text-primary uppercase tracking-widest leading-none">Status</span>
+                        <span className="text-xs font-bold text-foreground uppercase tracking-tighter mt-1">OPERATIONAL</span>
                     </div>
-                    <div className="px-4 py-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold animate-pulse flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <div className="px-4 py-2 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 text-sm font-bold animate-pulse flex items-center gap-2 shadow-sm">
+                        <div className="w-2 h-2 rounded-full bg-primary" />
                         <span className="hidden sm:inline">LIVE_FEED:</span> OK
                     </div>
                 </div>
@@ -149,29 +149,29 @@ export default async function DashboardPage() {
                     label="Live Occupancy"
                     value={`${stats.totalOccupants}`}
                     subtext={`${occupancyPercent}% total capacity`}
-                    icon={<PersonIcon className="w-6 h-6 text-emerald-400" />}
-                    className="hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] transition-all"
+                    icon={<PersonIcon className="w-6 h-6 text-primary" />}
+                    className="hover:shadow-[0_0_30px_rgba(227,64,0,0.15)] transition-all bg-card border-border shadow-sm hover:translate-y-[-2px]"
                 />
                 <StatsCard
                     label="Tents Deployed"
                     value={stats.tentsCount}
                     subtext="Across all sectors"
-                    icon={<CubeIcon className="w-6 h-6 text-cyan-400" />}
-                    className="hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all"
+                    icon={<CubeIcon className="w-6 h-6 text-primary" />}
+                    className="hover:shadow-[0_0_30px_rgba(251,146,60,0.15)] transition-all bg-card border-border shadow-sm hover:translate-y-[-2px]"
                 />
                 <StatsCard
                     label="Active Bookings"
                     value={stats.activeBookingsCount}
                     subtext="Confirmed/Checked-in"
-                    icon={<Pencil2Icon className="w-6 h-6 text-blue-400" />}
-                    className="hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all"
+                    icon={<Pencil2Icon className="w-6 h-6 text-primary" />}
+                    className="hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all bg-card border-border shadow-sm hover:translate-y-[-2px]"
                 />
                 <StatsCard
                     label="Staff Online"
                     value={stats.deskAdminsCount}
                     subtext="Desk operators assigned"
-                    icon={<LockClosedIcon className="w-6 h-6 text-purple-400" />}
-                    className="hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] transition-all"
+                    icon={<LockClosedIcon className="w-6 h-6 text-primary" />}
+                    className="hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] transition-all bg-card border-border shadow-sm hover:translate-y-[-2px]"
                 />
             </div>
 
@@ -180,13 +180,13 @@ export default async function DashboardPage() {
 
                 {/* Left: Occupancy Deep Dive */}
                 <div className="lg:col-span-8 space-y-6 md:space-y-8">
-                    <div className="glass p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-white/5 bg-gradient-to-br from-white/[0.05] to-transparent shadow-2xl overflow-hidden">
+                    <div className="bg-white p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-border shadow-sm overflow-hidden">
                         <div className="flex items-center justify-between mb-6 md:mb-8">
                             <div>
-                                <h3 className="text-xl md:text-2xl font-bold text-white">Sector Performance</h3>
-                                <p className="text-xs md:text-sm text-gray-500">Occupancy breakdown by zone</p>
+                                <h3 className="text-xl md:text-2xl font-bold text-foreground">Sector Performance</h3>
+                                <p className="text-xs md:text-sm text-muted-foreground">Occupancy breakdown by zone</p>
                             </div>
-                            <div className="hidden sm:block text-xs font-mono text-emerald-400/80 bg-emerald-400/5 px-3 py-1 rounded-full border border-emerald-400/10">
+                            <div className="hidden sm:block text-xs font-mono text-orange-700 bg-orange-100 px-3 py-1 rounded-full border border-orange-200 shadow-sm">
                                 DATA_REFRESH: OK
                             </div>
                         </div>
@@ -197,33 +197,33 @@ export default async function DashboardPage() {
                                     {stats.sectorData.length > 0 ? (
                                         <BarChart data={stats.sectorData} height={250} />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-gray-600 italic border border-dashed border-white/10 rounded-2xl">
+                                        <div className="w-full h-full flex items-center justify-center text-muted-foreground italic border border-dashed border-border rounded-2xl bg-secondary/30">
                                             No sector activity found.
                                         </div>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="flex flex-col items-center justify-center p-6 bg-white/[0.02] rounded-[1.5rem] border border-white/5">
-                                <h4 className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">Guest Diversity</h4>
+                            <div className="flex flex-col items-center justify-center p-6 bg-white rounded-[1.5rem] border border-border shadow-sm">
+                                <h4 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 text-center">Guest Diversity</h4>
                                 <DonutChart
                                     data={stats.genderData}
                                     size={140}
                                 />
-                                <div className="mt-4 flex gap-4 text-[9px] font-bold text-gray-500 uppercase">
+                                <div className="mt-4 flex gap-4 text-[9px] font-bold text-muted-foreground uppercase">
                                     <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div> M</div>
                                     <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-pink-400"></div> F</div>
                                     <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-purple-400"></div> O</div>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col items-center justify-center p-6 bg-white/[0.02] rounded-[1.5rem] border border-white/5">
-                                <h4 className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 text-center">Reservation Lifecycle</h4>
+                            <div className="flex flex-col items-center justify-center p-6 bg-white rounded-[1.5rem] border border-border shadow-sm">
+                                <h4 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 text-center">Reservation Lifecycle</h4>
                                 <DonutChart
                                     data={stats.statusData}
                                     size={140}
                                 />
-                                <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1 text-[8px] font-bold text-gray-600 uppercase">
+                                <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1 text-[8px] font-bold text-muted-foreground uppercase">
                                     <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div> Confirmed</div>
                                     <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> In Tent</div>
                                 </div>
@@ -234,18 +234,18 @@ export default async function DashboardPage() {
                     {/* Quick Controls */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                         {[
-                            { name: 'Bookings', href: '/event-admin/bookings', icon: <ClipboardIcon className="w-8 h-8" />, desc: 'Manage all reservations', color: 'from-blue-500/20 to-indigo-500/20' },
-                            { name: 'Inventory', href: '/event-admin/tents', icon: <CubeIcon className="w-8 h-8" />, desc: 'Live tent status', color: 'from-emerald-500/20 to-teal-500/20' },
-                            { name: 'Team', href: '/event-admin/team', icon: <LockClosedIcon className="w-8 h-8" />, desc: 'Staff permissions', color: 'from-purple-500/20 to-pink-500/20' }
+                            { name: 'Bookings', href: '/event-admin/bookings', icon: <ClipboardIcon className="w-8 h-8" />, desc: 'Manage all reservations', color: 'bg-white hover:bg-orange-50 border-orange-100' },
+                            { name: 'Inventory', href: '/event-admin/tents', icon: <CubeIcon className="w-8 h-8" />, desc: 'Live tent status', color: 'bg-white hover:bg-orange-50 border-orange-100' },
+                            { name: 'Team', href: '/event-admin/team', icon: <LockClosedIcon className="w-8 h-8" />, desc: 'Staff permissions', color: 'bg-white hover:bg-orange-50 border-orange-100' }
                         ].map((action) => (
                             <a
                                 key={action.name}
                                 href={action.href}
-                                className={`group p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] glass border-white/5 bg-gradient-to-br ${action.color} hover:scale-[1.02] md:hover:scale-[1.05] hover:shadow-2xl transition-all duration-500`}
+                                className={`group p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border transition-all duration-300 shadow-sm hover:shadow-lg hover:-translate-y-1 ${action.color}`}
                             >
-                                <div className="text-3xl md:text-4xl mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform">{action.icon}</div>
-                                <div className="text-lg md:text-xl font-black text-white group-hover:text-primary transition-colors">{action.name}</div>
-                                <div className="text-[10px] md:text-xs text-gray-500 mt-2 font-medium line-clamp-1 italic uppercase tracking-wider">{action.desc}</div>
+                                <div className="text-3xl md:text-4xl mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform text-primary">{action.icon}</div>
+                                <div className="text-lg md:text-xl font-black text-foreground group-hover:text-primary transition-colors">{action.name}</div>
+                                <div className="text-[10px] md:text-xs text-muted-foreground mt-2 font-medium line-clamp-1 italic uppercase tracking-wider">{action.desc}</div>
                             </a>
                         ))}
                     </div>
@@ -253,43 +253,43 @@ export default async function DashboardPage() {
 
                 {/* Right: Activity Stream */}
                 <div className="lg:col-span-4 flex flex-col gap-6 md:gap-8">
-                    <div className="glass p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-white/5 bg-gradient-to-b from-white/[0.05] to-transparent flex-1 shadow-2xl relative overflow-hidden group">
+                    <div className="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-border shadow-sm flex-1 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <FileTextIcon className="w-16 h-16 text-emerald-500" />
+                            <FileTextIcon className="w-16 h-16 text-primary" />
                         </div>
-                        <h3 className="text-xl md:text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                        <h3 className="text-xl md:text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
                             Tactical Feed
                         </h3>
                         <div className="space-y-6 relative">
-                            <div className="absolute left-1.5 top-2 bottom-2 w-0.5 bg-gradient-to-b from-emerald-500/50 via-gray-800 to-transparent"></div>
+                            <div className="absolute left-1.5 top-2 bottom-2 w-0.5 bg-gradient-to-b from-primary/50 via-secondary to-transparent"></div>
 
                             {stats.recentLogs.length === 0 ? (
-                                <div className="text-gray-600 text-sm italic pl-6 py-4">Waiting for tactical updates...</div>
+                                <div className="text-muted-foreground text-sm italic pl-6 py-4">Waiting for tactical updates...</div>
                             ) : (
                                 stats.recentLogs.map((log: any) => (
                                     <div key={log.id} className="relative pl-8 group/item">
-                                        <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-gray-800 border border-gray-700 group-hover/item:border-emerald-500/50 group-hover/item:bg-emerald-500/20 transition-all shadow-[0_0_8px_rgba(16,185,129,0)] group-hover/item:shadow-[0_0_8px_rgba(16,185,129,0.3)]"></div>
+                                        <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-secondary border border-border group-hover/item:border-primary/50 group-hover/item:bg-primary/20 transition-all shadow-[0_0_8px_rgba(227,64,0,0)] group-hover/item:shadow-[0_0_8px_rgba(227,64,0,0.3)]"></div>
                                         <div className="flex justify-between items-start mb-0.5">
-                                            <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest leading-none">
+                                            <p className="text-[10px] font-black text-primary uppercase tracking-widest leading-none">
                                                 {log.action.replace(/_/g, ' ')}
                                             </p>
-                                            <span className="text-[9px] text-gray-600 font-bold uppercase">{formatDistanceToNow(new Date(log.createdAt), { addSuffix: true })}</span>
+                                            <span className="text-[9px] text-muted-foreground font-bold uppercase">{formatDistanceToNow(new Date(log.createdAt), { addSuffix: true })}</span>
                                         </div>
-                                        <p className="text-xs text-gray-300 mt-1 line-clamp-2 leading-relaxed font-medium">
+                                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed font-medium group-hover/item:text-foreground transition-colors">
                                             {log.details}
                                         </p>
-                                        <p className="text-[9px] text-gray-500 mt-2 flex items-center gap-1.5 italic">
-                                            <span className="w-1 h-1 rounded-full bg-white/20"></span>
+                                        <p className="text-[9px] text-muted-foreground/70 mt-2 flex items-center gap-1.5 italic">
+                                            <span className="w-1 h-1 rounded-full bg-foreground/20"></span>
                                             BY {log.user.name || 'SYSTEM'}
                                         </p>
                                     </div>
                                 ))
                             )}
                         </div>
-                        <div className="mt-8 pt-6 border-t border-white/5">
+                        <div className="mt-8 pt-6 border-t border-border">
                             <a
                                 href="/event-admin/logs"
-                                className="block w-full text-center py-4 rounded-xl bg-white/5 hover:bg-emerald-500/10 text-[10px] font-black text-gray-400 hover:text-emerald-400 uppercase tracking-[0.2em] transition-all border border-white/5 hover:border-emerald-500/30 active:scale-95 shadow-lg"
+                                className="block w-full text-center py-4 rounded-xl bg-secondary hover:bg-orange-50 text-[10px] font-black text-muted-foreground hover:text-primary uppercase tracking-[0.2em] transition-all border border-border hover:border-primary/30 active:scale-95 shadow-sm"
                             >
                                 ACCESS FULL AUDIT ARCHIVE
                             </a>

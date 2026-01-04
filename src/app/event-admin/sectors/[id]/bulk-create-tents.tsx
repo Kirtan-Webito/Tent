@@ -65,31 +65,30 @@ export default function BulkCreateTents({ sectorId }: { sectorId: string }) {
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className="group relative px-6 py-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black uppercase tracking-widest text-xs hover:bg-emerald-500 hover:text-white transition-all duration-300 overflow-hidden"
+                className="group relative px-6 py-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-black uppercase tracking-widest text-xs hover:bg-emerald-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg"
             >
                 <span className="relative z-10 text-nowrap">+ Bulk Create</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </button>
 
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-                    <div className="glass p-8 rounded-[2.5rem] w-full max-w-md border-white/10 shadow-2xl animate-in zoom-in-95 duration-300">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/20 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+                    <div className="bg-white p-8 rounded-[2.5rem] w-full max-w-md border border-border shadow-2xl animate-in zoom-in-95 duration-300">
                         <div className="flex justify-between items-start mb-8">
                             <div>
-                                <div className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mb-1">AUTOMATED_DEPLOYMENT</div>
-                                <h2 className="text-3xl font-black text-white tracking-tighter">Bulk Generator</h2>
+                                <div className="text-[10px] text-emerald-600 font-bold uppercase tracking-[0.2em] mb-1">AUTOMATED_DEPLOYMENT</div>
+                                <h2 className="text-3xl font-black text-foreground tracking-tighter">Bulk Generator</h2>
                             </div>
-                            <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-white transition-colors">✕</button>
+                            <button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors">✕</button>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Naming Pattern</label>
+                                    <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2 ml-1">Naming Pattern</label>
                                     <select
                                         value={pattern}
                                         onChange={(e) => setPattern(e.target.value)}
-                                        className="input-primary w-full bg-black/40 border-white/5 text-gray-300 focus:border-emerald-500/50"
+                                        className="input-primary w-full"
                                     >
                                         <option value="DASH_NUMBER">Prefix-Number (T-1)</option>
                                         <option value="SPACE_NUMBER">Prefix Number (T 1)</option>
@@ -100,7 +99,7 @@ export default function BulkCreateTents({ sectorId }: { sectorId: string }) {
 
                                 {pattern !== 'JUST_NUMBER' && (
                                     <div className="animate-in slide-in-from-top-2">
-                                        <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Label Prefix</label>
+                                        <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2 ml-1">Label Prefix</label>
                                         <input
                                             value={namePrefix}
                                             onChange={(e) => setNamePrefix(e.target.value.toUpperCase())}
@@ -113,7 +112,7 @@ export default function BulkCreateTents({ sectorId }: { sectorId: string }) {
 
                                 <div className="grid grid-cols-3 gap-4">
                                     <div>
-                                        <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Quantity</label>
+                                        <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2 ml-1">Quantity</label>
                                         <input
                                             type="number"
                                             value={quantity || ''}
@@ -123,7 +122,7 @@ export default function BulkCreateTents({ sectorId }: { sectorId: string }) {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Start Idx</label>
+                                        <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2 ml-1">Start Idx</label>
                                         <input
                                             type="number"
                                             value={startFrom || 0}
@@ -133,7 +132,7 @@ export default function BulkCreateTents({ sectorId }: { sectorId: string }) {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 ml-1">Max Pers</label>
+                                        <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2 ml-1">Max Pers</label>
                                         <input
                                             type="number"
                                             value={capacity || ''}
@@ -145,23 +144,23 @@ export default function BulkCreateTents({ sectorId }: { sectorId: string }) {
                                 </div>
                             </div>
 
-                            <div className="p-4 rounded-2xl bg-black/40 border border-white/5 border-dashed">
-                                <div className="text-[10px] text-gray-600 font-black uppercase tracking-widest mb-1">Generated Output</div>
-                                <div className="text-xs font-mono text-emerald-400/80">{generatePreview()}</div>
+                            <div className="p-4 rounded-2xl bg-secondary/50 border border-border border-dashed">
+                                <div className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mb-1">Generated Output</div>
+                                <div className="text-xs font-mono text-emerald-600 font-bold">{generatePreview()}</div>
                             </div>
 
                             <div className="flex gap-3 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => setIsOpen(false)}
-                                    className="flex-1 py-4 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all"
+                                    className="flex-1 py-4 rounded-2xl text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-secondary transition-all"
                                 >
                                     Abort
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="flex-[2] py-4 rounded-2xl bg-emerald-500 text-black text-xs font-black uppercase tracking-widest hover:bg-emerald-400 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] disabled:opacity-50 transition-all active:scale-95"
+                                    className="flex-[2] py-4 rounded-2xl bg-emerald-600 text-white text-xs font-black uppercase tracking-widest hover:bg-emerald-500 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 transition-all active:scale-95 shadow-md"
                                 >
                                     {loading ? 'Processing...' : 'Execute Sequence'}
                                 </button>

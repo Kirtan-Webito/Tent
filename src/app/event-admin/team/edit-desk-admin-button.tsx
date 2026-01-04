@@ -81,7 +81,7 @@ export default function EditDeskAdminButton({
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className="px-3 py-1.5 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400 font-black text-[10px] uppercase tracking-widest hover:bg-purple-500 hover:text-white transition-all active:scale-95"
+                className="px-3 py-1.5 rounded-lg bg-orange-100 border border-orange-200 text-orange-700 font-bold text-[10px] uppercase tracking-widest hover:bg-orange-200 transition-all active:scale-95 shadow-sm"
             >
                 Edit
             </button>
@@ -95,7 +95,7 @@ export default function EditDeskAdminButton({
                         <button
                             type="button"
                             onClick={() => setIsOpen(false)}
-                            className="flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-all"
+                            className="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-secondary transition-all"
                         >
                             Cancel
                         </button>
@@ -103,7 +103,7 @@ export default function EditDeskAdminButton({
                             form="edit-operator-form"
                             type="submit"
                             disabled={loading}
-                            className="flex-[2] py-3 rounded-xl bg-purple-500 text-white text-xs font-black uppercase tracking-widest hover:bg-purple-400 disabled:opacity-50 transition-all"
+                            className="flex-[2] btn-primary"
                         >
                             {loading ? 'Saving...' : 'Update Records'}
                         </button>
@@ -113,40 +113,40 @@ export default function EditDeskAdminButton({
                 <form id="edit-operator-form" onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Full Name</label>
-                            <input name="name" defaultValue={user.name || ''} required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500/50 transition-colors" placeholder="e.g. Alex Rivera" />
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Full Name</label>
+                            <input name="name" defaultValue={user.name || ''} required className="input-primary" placeholder="e.g. Alex Rivera" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Email Address</label>
-                            <input name="email" type="email" defaultValue={user.email} required className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500/50 transition-colors" placeholder="alex@operations.tent" />
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Email Address</label>
+                            <input name="email" type="email" defaultValue={user.email} required className="input-primary" placeholder="alex@operations.tent" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">New Password (optional)</label>
-                            <input name="password" type="password" className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500/50 transition-colors" placeholder="••••••••" />
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">New Password (optional)</label>
+                            <input name="password" type="password" className="input-primary" placeholder="••••••••" />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Operational Zones</label>
-                            <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-black/20 rounded-xl border border-white/5">
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3">Operational Zones</label>
+                            <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-secondary/50 rounded-xl border border-border">
                                 {allSectors.map(sector => (
                                     <div
                                         key={sector.id}
                                         onClick={() => toggleSector(sector.id)}
                                         className={`flex items-center gap-2 p-2.5 rounded-lg cursor-pointer transition-all border ${selectedSectorIds.includes(sector.id)
-                                            ? 'bg-purple-500/20 border-purple-500/40 text-white'
-                                            : 'bg-white/5 border-transparent text-gray-500 hover:bg-white/10'
+                                            ? 'bg-orange-100 border-orange-300 text-orange-800'
+                                            : 'bg-white border-transparent text-muted-foreground hover:bg-white/80'
                                             }`}
                                     >
                                         <div className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition-all ${selectedSectorIds.includes(sector.id)
-                                            ? 'bg-purple-500 border-purple-500'
-                                            : 'bg-transparent border-gray-600'
+                                            ? 'bg-primary border-primary'
+                                            : 'bg-transparent border-input'
                                             }`}>
-                                            {selectedSectorIds.includes(sector.id) && <span className="text-[8px]">✓</span>}
+                                            {selectedSectorIds.includes(sector.id) && <span className="text-[8px] text-white">✓</span>}
                                         </div>
                                         <span className="text-[11px] font-bold truncate">{sector.name}</span>
                                     </div>
                                 ))}
                             </div>
-                            <p className="mt-2 text-[10px] text-gray-600 italic">{selectedSectorIds.length} sectors selected</p>
+                            <p className="mt-2 text-[10px] text-muted-foreground italic">{selectedSectorIds.length} sectors selected</p>
                         </div>
                     </div>
                 </form>
