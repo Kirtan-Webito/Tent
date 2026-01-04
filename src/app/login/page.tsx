@@ -48,13 +48,17 @@ export default function LoginPage() {
 
             <div className="w-full max-w-md p-8 bg-white shadow-2xl border border-border rounded-2xl animate-fade-in relative z-10">
                 <div className="text-center mb-8">
-                    <div className="inline-block p-3 rounded-xl bg-primary/10 mb-4 border border-primary/20">
-                        <HomeIcon className="w-8 h-8 text-primary" />
+                    <div className="inline-block">
+                        <img
+                            src="/logo.png"
+                            alt="Logo"
+                            className="w-40 object-contain"
+                        />
                     </div>
                     <h1 className="text-3xl font-bold text-foreground">
-                        Welcome Back
+                        Sign in
                     </h1>
-                    <p className="text-muted-foreground mt-2 text-sm">Sign in to manage your event permissions</p>
+                    <p className="text-muted-foreground mt-2 text-sm">Sign in to manage your website</p>
                 </div>
 
                 {error && (

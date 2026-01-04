@@ -87,10 +87,8 @@ export default function Sidebar({ title, subtitle, icon, color, navItems, isOpen
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 <div className="p-8 pb-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-tr ${theme.bg} flex items-center justify-center text-xl shadow-lg ${theme.shadow} text-white`}>
-                            {icon}
-                        </div>
+                    <div className="flex items-center">
+                        <img src="/logo.png" alt="Logo" className="w-20 object-contain" />
                         <div>
                             <h1 className="font-bold text-lg leading-tight tracking-tight text-foreground">
                                 {title.split(' ').map((word, i) => (
