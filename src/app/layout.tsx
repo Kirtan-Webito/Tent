@@ -39,6 +39,10 @@ const lato = Lato({
 export const metadata: Metadata = {
   title: "Tent Management System",
   description: "Advanced tent management and booking system",
+  icons: {
+    icon: '/icon.png', // Explicitly set the icon
+    apple: '/icon.png', // Also set for Apple devices
+  }
 };
 
 import NextTopLoader from 'nextjs-toploader';
