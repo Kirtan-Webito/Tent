@@ -29,6 +29,7 @@ export default function DeskAdminLayout({
     ];
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     return (
         <div className="flex h-screen bg-background text-foreground overflow-hidden font-sans selection:bg-primary/30">
@@ -40,6 +41,8 @@ export default function DeskAdminLayout({
                 navItems={navItems}
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
+                isCollapsed={isCollapsed}
+                onToggle={() => setIsCollapsed(!isCollapsed)}
             />
 
             <main className="flex-1 overflow-auto relative bg-gradient-to-br from-background to-secondary/30">

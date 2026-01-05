@@ -25,6 +25,7 @@ export default function EventAdminLayout({
 }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     const navItems = [
         { name: 'Dashboard', href: '/event-admin/dashboard', icon: <DashboardIcon className="w-5 h-5" /> },
@@ -45,6 +46,8 @@ export default function EventAdminLayout({
                 navItems={navItems}
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
+                isCollapsed={isCollapsed}
+                onToggle={() => setIsCollapsed(!isCollapsed)}
             />
 
             <main className="flex-1 overflow-auto relative bg-gradient-to-br from-background to-secondary/30">
