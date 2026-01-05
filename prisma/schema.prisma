@@ -7,159 +7,148 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Users (Admins)
 model User {
   id              String    @id @default(uuid())
   email           String    @unique
   password        String
-  role            String // Enum: SUPER_ADMIN, EVENT_ADMIN, DESK_ADMIN
+  role            String
   name            String?
   assignedEventId String?
-  assignedEvent   Event?    @relation(fields: [assignedEventId], references: [id])
-  assignedSectors  Sector[]
-  bookings        Booking[] // For Desk Admins handling bookings
-  logs            Log[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  bookings        Booking[]
+  logs            Log[]
+  assignedEvent   Event?    @relation(fields: [assignedEventId], references: [id])
+  assignedSectors Sector[]  @relation("SectorToUser")
 }
 
-// Events
 model Event {
   id                String             @id @default(uuid())
   name              String
   location          String
   startDate         DateTime
   endDate           DateTime
-  sectors           Sector[]
-  users             User[] // Admins assigned to this event
-  emergencyContacts EmergencyContact[]
-  sops              SOP[]
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
+  emergencyContacts EmergencyContact[]
+  sops              SOP[]
+  sectors           Sector[]
+  users             User[]
 }
 
-// Sectors within an Event
 model Sector {
-  id        String   @id @default(uuid())
-  name      String
-  eventId   String
-  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  tents     Tent[]
-  assignedUsers User[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(uuid())
+  name          String
+  eventId       String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tents         Tent[]
+  assignedUsers User[]   @relation("SectorToUser")
 }
 
-// Tents within a Sector
 model Tent {
   id              String           @id @default(uuid())
   name            String
   capacity        Int
   sectorId        String
-  sector          Sector           @relation(fields: [sectorId], references: [id], onDelete: Cascade)
-  bookings        Booking[]
-  serviceRequests ServiceRequest[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+  bookings        Booking[]
+  serviceRequests ServiceRequest[]
+  sector          Sector           @relation(fields: [sectorId], references: [id], onDelete: Cascade)
 }
 
-// Bookings
 model Booking {
-  id           String    @id @default(uuid())
+  id           String        @id @default(uuid())
   tentId       String
-  tent         Tent      @relation(fields: [tentId], references: [id])
   deskAdminId  String
-  deskAdmin    User      @relation(fields: [deskAdminId], references: [id])
-  members      Member[]
   mobile       String?
   notes        String?
   checkInDate  DateTime?
   checkOutDate DateTime?
-  checkInTime  DateTime? // Actual check-in timestamp
-  checkOutTime DateTime? // Actual check-out timestamp
-  status       String    @default("CONFIRMED") // PENDING, CONFIRMED, CHECKED_IN, CHECKED_OUT, CANCELLED
-  isVIP        Boolean   @default(false)
+  checkInTime  DateTime?
+  checkOutTime DateTime?
+  status       String        @default("CONFIRMED")
+  isVIP        Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  deskAdmin    User          @relation(fields: [deskAdminId], references: [id])
+  tent         Tent          @relation(fields: [tentId], references: [id])
   bookingNotes BookingNote[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  members      Member[]
 }
 
 model BookingNote {
   id        String   @id @default(uuid())
   bookingId String
-  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   content   String
-  author    String   // Name of the admin who added the note
+  author    String
   createdAt DateTime @default(now())
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
 
-// Members in a Booking
 model Member {
   id           String    @id @default(uuid())
   name         String
   age          Int
-  gender       String // Enum: MALE, FEMALE, OTHER
+  gender       String
   contact      String?
   bookingId    String
-  booking      Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   checkedInAt  DateTime?
   checkedOutAt DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  booking      Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
 
-// Service Requests (Desk Admin)
 model ServiceRequest {
   id        String   @id @default(uuid())
   tentId    String
-  tent      Tent     @relation(fields: [tentId], references: [id])
-  request   String // e.g. "Extra Towels"
-  status    String   @default("PENDING") // PENDING, COMPLETED, CANCELLED
+  request   String
+  status    String   @default("PENDING")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  tent      Tent     @relation(fields: [tentId], references: [id])
 }
 
-// Audit Logs
 model Log {
   id        String   @id @default(uuid())
   action    String
   details   String
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
-// Emergency Contacts (Event-specific)
 model EmergencyContact {
   id        String   @id @default(uuid())
   eventId   String
-  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  title     String // e.g. "Security Head"
-  name      String // e.g. "Mr. John Wick"
+  title     String
+  name      String
   phone     String
-  order     Int      @default(0) // For sorting
+  order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
-// Standard Operating Procedures (Event-specific)
 model SOP {
   id        String   @id @default(uuid())
   eventId   String
-  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  rule      String // The SOP rule text
-  order     Int      @default(0) // For sorting
+  rule      String
+  order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
-// Notifications for Admins
 model Notification {
-  id        String   @id @default(uuid())
-  eventId   String?
-  targetRole String? // ALL, EVENT_ADMIN, DESK_ADMIN
-  type      String   // INFO, WARNING, SUCCESS, ERROR
-  message   String
-  read      Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  eventId    String?
+  targetRole String?
+  type       String
+  message    String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
 }

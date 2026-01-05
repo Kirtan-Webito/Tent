@@ -41,6 +41,7 @@ export const metadata: Metadata = {
   description: "Advanced tent management and booking system",
 };
 
+import NextTopLoader from 'nextjs-toploader';
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export default function RootLayout({
@@ -51,6 +52,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${roboto.variable} ${openSans.variable} ${montserrat.variable} ${lato.variable} antialiased`} suppressHydrationWarning>
+        <NextTopLoader color="#EA580C" showSpinner={false} />
         <ToastProvider>
           {children}
           <SpeedInsights />

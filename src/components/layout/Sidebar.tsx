@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { useState } from 'react';
-import { ExitIcon } from '@radix-ui/react-icons';
+import { ExitIcon, ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 
 export type NavItem = {
     name: string;
@@ -20,9 +20,21 @@ export type SidebarProps = {
     navItems: NavItem[];
     isOpen: boolean;
     onClose: () => void;
+    isCollapsed: boolean;
+    onToggle: () => void;
 };
 
-export default function Sidebar({ title, subtitle, icon, color, navItems, isOpen, onClose }: SidebarProps) {
+export default function Sidebar({
+    title,
+    subtitle,
+    icon,
+    color,
+    navItems,
+    isOpen,
+    onClose,
+    isCollapsed,
+    onToggle
+}: SidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -83,29 +95,40 @@ export default function Sidebar({ title, subtitle, icon, color, navItems, isOpen
             />
 
             <aside className={clsx(
-                "fixed top-0 left-0 bottom-0 w-72 z-50 flex flex-col border-r border-border bg-card/95 backdrop-blur-2xl transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static h-screen shadow-xl",
-                isOpen ? "translate-x-0" : "-translate-x-full"
+                "fixed top-0 left-0 bottom-0 z-50 flex flex-col border-r border-border bg-card/95 backdrop-blur-2xl transition-all duration-300 ease-in-out lg:static h-screen shadow-xl",
+                isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+                isCollapsed ? "w-20" : "w-72"
             )}>
-                <div className="p-8 pb-4 flex items-center justify-between">
+                <div className={clsx("flex items-center justify-between transition-all duration-300", isCollapsed ? "py-4 justify-center" : "p-8 pb-4")}>
                     <div className="flex items-center">
-                        <img src="/logo.png" alt="Logo" className="w-20 object-contain" />
-                        <div>
-                            <h1 className="font-bold text-lg leading-tight tracking-tight text-foreground">
-                                {title.split(' ').map((word, i) => (
-                                    <span key={i} className={i === 1 ? theme.text : ''}>{word} </span>
-                                ))}
-                            </h1>
-                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">{subtitle}</p>
-                        </div>
+                        <img src="/logo.png" alt="Logo" className={clsx("object-contain transition-all duration-300", isCollapsed ? "w-20" : "w-20 mr-4")} />
+                        {!isCollapsed && (
+                            <div className="overflow-hidden whitespace-nowrap">
+                                <h1 className="font-bold text-lg leading-tight tracking-tight text-foreground">
+                                    {title.split(' ').map((word, i) => (
+                                        <span key={i} className={i === 1 ? theme.text : ''}>{word} </span>
+                                    ))}
+                                </h1>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">{subtitle}</p>
+                            </div>
+                        )}
                     </div>
                     {/* Mobile Close Button */}
-                    <button onClick={onClose} className="lg:hidden p-2 text-muted-foreground hover:text-foreground">
+                    <button onClick={onClose} className="lg:hidden p-2 text-muted-foreground hover:text-foreground absolute right-4 top-4">
                         <span className="text-xl">✕</span>
                     </button>
                 </div>
 
-                <nav className="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar">
-                    <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4 px-4 mt-2">Menu</div>
+                {/* Desktop Toggle Button */}
+                <button
+                    onClick={onToggle}
+                    className="hidden lg:flex absolute -right-3 top-10 w-6 h-6 bg-card border border-border rounded-full items-center justify-center text-muted-foreground hover:text-foreground shadow-sm z-50 transition-colors"
+                >
+                    {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                </button>
+
+                <nav className="flex-1 px-3 space-y-2 overflow-y-auto custom-scrollbar mt-4">
+                    {!isCollapsed && <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4 px-4 mt-2 fade-in">Menu</div>}
                     {navItems.map((item) => {
                         const isActive = pathname.startsWith(item.href);
                         return (
@@ -116,14 +139,17 @@ export default function Sidebar({ title, subtitle, icon, color, navItems, isOpen
                                     if (window.innerWidth < 1024) onClose();
                                 }}
                                 className={clsx(
-                                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden",
+                                    "flex items-center gap-3 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden",
+                                    isCollapsed ? "justify-center px-0" : "px-4",
                                     isActive
                                         ? `bg-primary/10 ${theme.text} shadow-sm font-bold border ${theme.border}`
                                         : "text-muted-foreground hover:bg-secondary hover:text-foreground border border-transparent"
                                 )}
+                                title={isCollapsed ? item.name : undefined}
                             >
-                                <span className={clsx("transition-transform duration-300 text-lg", isActive ? "scale-110" : "group-hover:scale-110")}>{item.icon}</span>
-                                <span>{item.name}</span>
+                                <span className={clsx("transition-transform duration-300 text-lg flex-shrink-0", isActive ? "scale-110" : "group-hover:scale-110")}>{item.icon}</span>
+                                {!isCollapsed && <span className="whitespace-nowrap overflow-hidden text-ellipsis">{item.name}</span>}
+
                                 {isActive && <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 ${theme.iconBg} rounded-r-full`} />}
 
                                 {/* Hover Glow */}
@@ -133,14 +159,18 @@ export default function Sidebar({ title, subtitle, icon, color, navItems, isOpen
                     })}
                 </nav>
 
-                <div className="p-4 border-t border-border bg-secondary/30">
+                <div className="p-3 border-t border-border bg-secondary/30">
                     <button
                         onClick={handleLogout}
                         disabled={loading}
-                        className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors group relative overflow-hidden"
+                        className={clsx(
+                            "flex items-center gap-3 w-full py-3 rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors group relative overflow-hidden",
+                            isCollapsed ? "justify-center px-0" : "px-4"
+                        )}
+                        title={isCollapsed ? "Sign Out" : undefined}
                     >
-                        <ExitIcon className="group-hover:-translate-x-1 transition-transform w-5 h-5" />
-                        <span>{loading ? 'Logging out...' : 'Sign Out'}</span>
+                        <ExitIcon className="group-hover:-translate-x-1 transition-transform w-5 h-5 flex-shrink-0" />
+                        {!isCollapsed && <span className="whitespace-nowrap">{loading ? 'Logging out...' : 'Sign Out'}</span>}
                     </button>
                 </div>
             </aside>

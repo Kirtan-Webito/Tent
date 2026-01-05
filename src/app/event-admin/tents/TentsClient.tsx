@@ -116,52 +116,89 @@ export default function TentsClient({ tents }: { tents: SectorItem[] }) {
                                     </div>
                                 </button>
 
-                                {/* Accordion Content */}
+                                {/* Accordion Content - Table View */}
                                 {isExpanded && (
-                                    <div className="px-6 pb-6 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-                                            {sector.tents.length === 0 ? (
-                                                <div className="col-span-full py-8 text-center text-muted-foreground italic text-sm">
-                                                    No tents in this sector.
-                                                </div>
-                                            ) : (
-                                                sector.tents.map((item) => (
-                                                    <div
-                                                        key={item.id}
-                                                        onClick={() => handleTentClick(item, { id: sector.id, name: sector.name })}
-                                                        className={`p-5 rounded-2xl border cursor-pointer transition-all hover:scale-105 hover:shadow-lg active:scale-95 group ${item.status === 'Available' ? 'bg-emerald-50 border-emerald-100 hover:bg-emerald-100' :
-                                                            item.status === 'Occupied' ? 'bg-orange-50 border-orange-100 hover:bg-orange-100' :
-                                                                'bg-secondary border-border opacity-75'
-                                                            }`}
-                                                    >
-                                                        <div className="flex justify-between items-start mb-3">
-                                                            <span className={`font-black text-xl tracking-tighter transition-colors ${item.status === 'Available' ? 'text-emerald-700' :
-                                                                item.status === 'Occupied' ? 'text-primary' :
-                                                                    'text-muted-foreground'
-                                                                }`} title={item.name}>
-                                                                {item.name}
-                                                            </span>
-                                                        </div>
-                                                        <div className="flex flex-col gap-2">
-                                                            <div className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest text-center border ${item.status === 'Available' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
-                                                                item.status === 'Occupied' ? 'bg-orange-100 text-orange-700 border-orange-200' :
-                                                                    'bg-secondary text-muted-foreground border-border'
-                                                                }`}>
-                                                                {item.status}
-                                                            </div>
-                                                        </div>
-                                                        {item.currentBooking && (
-                                                            <div className="mt-4 pt-4 border-t border-black/5 flex items-center gap-2">
-                                                                <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                                                                <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-tighter">
-                                                                    {item.currentBooking.members.length} GUEST{item.currentBooking.members.length !== 1 ? 'S' : ''}
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                ))
-                                            )}
-                                        </div>
+                                    <div className="animate-in fade-in slide-in-from-top-2 duration-300 border-t border-border">
+                                        {sector.tents.length === 0 ? (
+                                            <div className="py-8 text-center text-muted-foreground italic text-sm">
+                                                No tents in this sector.
+                                            </div>
+                                        ) : (
+                                            <div className="overflow-x-auto">
+                                                <table className="w-full text-left text-sm">
+                                                    <thead className="bg-secondary/30 text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">
+                                                        <tr>
+                                                            <th className="px-6 py-4">Tent</th>
+                                                            <th className="px-6 py-4">Status</th>
+                                                            <th className="px-6 py-4">Guests</th>
+                                                            <th className="px-6 py-4">Timeline</th>
+                                                            <th className="px-6 py-4 text-right">Details</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-border">
+                                                        {sector.tents.map((item) => (
+                                                            <tr
+                                                                key={item.id}
+                                                                onClick={() => handleTentClick(item, { id: sector.id, name: sector.name })}
+                                                                className="group hover:bg-secondary/50 transition-colors cursor-pointer"
+                                                            >
+                                                                <td className="px-6 py-4">
+                                                                    <span className="font-bold text-foreground text-base group-hover:text-primary transition-colors">
+                                                                        {item.name}
+                                                                    </span>
+                                                                    <div className="text-[10px] text-muted-foreground font-mono">
+                                                                        CAP: {item.capacity}
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${item.status === 'Available' ? 'bg-emerald-100/50 text-emerald-700 border-emerald-200' :
+                                                                            item.status === 'Occupied' ? 'bg-orange-100/50 text-orange-700 border-orange-200' :
+                                                                                'bg-secondary text-muted-foreground border-border'
+                                                                        }`}>
+                                                                        {item.status}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    {item.currentBooking ? (
+                                                                        <div className="flex items-center gap-2">
+                                                                            <div className="flex -space-x-2">
+                                                                                {item.currentBooking.members.slice(0, 3).map((m, i) => (
+                                                                                    <div key={i} className="w-6 h-6 rounded-full bg-primary/10 border border-white flex items-center justify-center text-[8px] font-bold text-primary ring-2 ring-white">
+                                                                                        {m.name.charAt(0)}
+                                                                                    </div>
+                                                                                ))}
+                                                                                {item.currentBooking.members.length > 3 && (
+                                                                                    <div className="w-6 h-6 rounded-full bg-secondary border border-white flex items-center justify-center text-[8px] font-bold text-muted-foreground ring-2 ring-white">
+                                                                                        +{item.currentBooking.members.length - 3}
+                                                                                    </div>
+                                                                                )}
+                                                                            </div>
+                                                                            <span className="text-xs font-medium text-foreground">
+                                                                                {item.currentBooking.members[0].name}
+                                                                                {item.currentBooking.members.length > 1 && <span className="text-muted-foreground"> +{item.currentBooking.members.length - 1}</span>}
+                                                                            </span>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <span className="text-xs text-muted-foreground italic">-</span>
+                                                                    )}
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-white text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all active:scale-95">
+                                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                                        History
+                                                                    </button>
+                                                                </td>
+                                                                <td className="px-6 py-4 text-right">
+                                                                    <div className="w-8 h-8 rounded-full bg-white border border-border flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:border-primary transition-all">
+                                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>

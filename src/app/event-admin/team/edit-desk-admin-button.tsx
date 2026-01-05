@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
 
 interface Sector {
     id: string;
@@ -79,12 +80,13 @@ export default function EditDeskAdminButton({
 
     return (
         <>
-            <button
+            <Button
                 onClick={() => setIsOpen(true)}
-                className="px-3 py-1.5 rounded-lg bg-orange-100 border border-orange-200 text-orange-700 font-bold text-[10px] uppercase tracking-widest hover:bg-orange-200 transition-all active:scale-95 shadow-sm"
+                variant="secondary"
+                size="sm"
             >
                 Edit
-            </button>
+            </Button>
 
             <Modal
                 isOpen={isOpen}
@@ -92,21 +94,25 @@ export default function EditDeskAdminButton({
                 title="Edit Personnel Assignment"
                 actions={
                     <div className="flex gap-3 w-full">
-                        <button
+                        <Button
                             type="button"
                             onClick={() => setIsOpen(false)}
-                            className="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-secondary transition-all"
+                            variant="ghost"
+                            size="md"
+                            className="flex-1 py-3"
                         >
                             Cancel
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             form="edit-operator-form"
                             type="submit"
-                            disabled={loading}
-                            className="flex-[2] btn-primary"
+                            variant="primary"
+                            size="md"
+                            isLoading={loading}
+                            className="flex-[2]"
                         >
                             {loading ? 'Saving...' : 'Update Records'}
-                        </button>
+                        </Button>
                     </div>
                 }
             >

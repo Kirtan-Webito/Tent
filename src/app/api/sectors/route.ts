@@ -2,6 +2,28 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 
+export async function GET() {
+    try {
+        const session = await getSession();
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const sectors = await prisma.sector.findMany({
+            select: {
+                id: true,
+                name: true
+            },
+            orderBy: { name: 'asc' }
+        });
+
+        return NextResponse.json(sectors);
+    } catch (error) {
+        console.error('Error fetching sectors:', error);
+        return NextResponse.json({ error: 'Error fetching sectors' }, { status: 500 });
+    }
+}
+
 export async function POST(req: Request) {
     try {
         const session = await getSession();
@@ -38,7 +60,7 @@ export async function DELETE(req: Request) {
             return NextResponse.json({ error: 'Missing Sector ID' }, { status: 400 });
         }
 
-        // Optional: Check if sector has tents/bookings before deleting? 
+        // Optional: Check if sector has tents/bookings before deleting?
         // For now, let's assume cascade delete or let Prisma handle it if configured
         await prisma.sector.delete({
             where: { id: sectorId }

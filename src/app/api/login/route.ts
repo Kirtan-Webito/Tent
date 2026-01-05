@@ -14,7 +14,16 @@ export async function POST(req: Request) {
 
         const user = await prisma.user.findUnique({
             where: { email },
-            include: { assignedSectors: { select: { id: true } } }
+            include: {
+                assignedSectors: {
+                    include: {
+                        event: {
+                            select: { id: true, endDate: true, name: true }
+                        }
+                    }
+                },
+                assignedEvent: { select: { id: true, endDate: true, name: true } }
+            }
         });
 
         if (!user) {
@@ -26,6 +35,32 @@ export async function POST(req: Request) {
 
         if (!isValid) {
             return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+        }
+
+        // Check for Event Expiration
+        const now = new Date();
+
+        if (user.role === 'EVENT_ADMIN' && user.assignedEvent) {
+            const endDate = new Date(user.assignedEvent.endDate);
+            if (now > endDate) {
+                return NextResponse.json({
+                    error: `Access Denied: The event "${user.assignedEvent.name}" has expired.`
+                }, { status: 403 });
+            }
+        } else if (user.role === 'DESK_ADMIN' && user.assignedSectors.length > 0) {
+            // Check if user has ANY active event context.
+            // If ALL assigned (via sectors) events are expired, deny access.
+            const hasActiveEvent = user.assignedSectors.some(sector => {
+                return sector.event && new Date(sector.event.endDate) > now;
+            });
+
+            if (!hasActiveEvent) {
+                // Use the first event name for the error message context
+                const eventName = user.assignedSectors[0]?.event?.name || 'Assigned Event';
+                return NextResponse.json({
+                    error: `Access Denied: The event "${eventName}" has expired.`
+                }, { status: 403 });
+            }
         }
 
         // Generate JWT

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Button from '@/components/ui/Button';
 
 export default function AddEventButton() {
     const [isOpen, setIsOpen] = useState(false);
@@ -37,9 +38,9 @@ export default function AddEventButton() {
 
     return (
         <>
-            <button onClick={() => setIsOpen(true)} className="btn-primary">
+            <Button onClick={() => setIsOpen(true)} variant="primary" size="md">
                 + Create Event
-            </button>
+            </Button>
 
             {isOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm h-screen">
@@ -66,10 +67,12 @@ export default function AddEventButton() {
                             </div>
 
                             <div className="flex justify-end gap-2 mt-6">
-                                <button type="button" onClick={() => setIsOpen(false)} className="px-4 py-2 hover:bg-white/10 rounded-lg transition">Cancel</button>
-                                <button type="submit" disabled={loading} className="btn-primary">
+                                <Button type="button" onClick={() => setIsOpen(false)} variant="ghost" size="md">
+                                    Cancel
+                                </Button>
+                                <Button type="submit" variant="primary" size="md" isLoading={loading}>
                                     {loading ? 'Creating...' : 'Create Event'}
-                                </button>
+                                </Button>
                             </div>
                         </form>
                     </div>

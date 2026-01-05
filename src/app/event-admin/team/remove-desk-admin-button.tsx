@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Modal from '@/components/ui/Modal'; // Using our reusable modal
+import Modal from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
 
 export default function RemoveDeskAdminButton({ userId, userName }: { userId: string, userName: string }) {
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -29,12 +30,13 @@ export default function RemoveDeskAdminButton({ userId, userName }: { userId: st
 
     return (
         <>
-            <button
+            <Button
                 onClick={() => setIsConfirmOpen(true)}
-                className="text-red-400 hover:text-red-300 font-medium text-sm transition-colors hover:bg-red-500/10 px-3 py-1 rounded"
+                variant="danger"
+                size="sm"
             >
                 Remove
-            </button>
+            </Button>
 
             <Modal
                 isOpen={isConfirmOpen}
@@ -42,19 +44,21 @@ export default function RemoveDeskAdminButton({ userId, userName }: { userId: st
                 title="Remove Desk Admin"
                 actions={
                     <>
-                        <button
+                        <Button
                             onClick={() => setIsConfirmOpen(false)}
-                            className="px-4 py-2 hover:bg-white/10 rounded-lg text-gray-300 transition"
+                            variant="ghost"
+                            size="md"
                         >
                             Cancel
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={handleRemove}
-                            disabled={loading}
-                            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition font-medium"
+                            variant="danger"
+                            size="md"
+                            isLoading={loading}
                         >
                             {loading ? 'Removing...' : 'Confirm Remove'}
-                        </button>
+                        </Button>
                     </>
                 }
             >

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import BookingDetailsModal from './BookingDetailsModal';
 import { MagnifyingGlassIcon, PersonIcon, MobileIcon, ArchiveIcon, HomeIcon } from '@radix-ui/react-icons';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 
 interface Member {
     id: string;
@@ -34,6 +35,8 @@ interface Booking {
 export default function BookingsClient({ initialBookings }: { initialBookings: Booking[] }) {
     const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCheckOutOpen, setIsCheckOutOpen] = useState(false);
+    const [checkOutBookingId, setCheckOutBookingId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [bookings, setBookings] = useState<Booking[]>(initialBookings);
 
@@ -85,8 +88,6 @@ export default function BookingsClient({ initialBookings }: { initialBookings: B
     };
 
     const handleCheckOut = async (bookingId: string) => {
-        if (!confirm('Are you sure you want to check out this guest?')) return;
-
         const res = await fetch('/api/bookings/checkout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -283,7 +284,8 @@ export default function BookingsClient({ initialBookings }: { initialBookings: B
                                                     <button
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            handleCheckOut(booking.id);
+                                                            setCheckOutBookingId(booking.id);
+                                                            setIsCheckOutOpen(true);
                                                         }}
                                                         className="px-4 py-2 bg-red-100 border border-red-200 hover:bg-red-600 text-red-700 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95"
                                                     >
@@ -304,6 +306,23 @@ export default function BookingsClient({ initialBookings }: { initialBookings: B
                 booking={selectedBooking}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
+            />
+
+            <ConfirmDialog
+                isOpen={isCheckOutOpen}
+                onClose={() => {
+                    setIsCheckOutOpen(false);
+                    setCheckOutBookingId(null);
+                }}
+                onConfirm={() => {
+                    if (checkOutBookingId) {
+                        handleCheckOut(checkOutBookingId);
+                    }
+                }}
+                title="Check Out Guest"
+                message="Are you sure you want to check out this guest?"
+                confirmText="Check Out"
+                variant="danger"
             />
         </div>
     );

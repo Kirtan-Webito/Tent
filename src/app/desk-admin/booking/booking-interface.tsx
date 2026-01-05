@@ -381,7 +381,10 @@ export default function BookingInterface({ sectors }: { sectors: Sector[] }) {
                                         }`}
                                 >
                                     <span className="font-medium">{sector.name}</span>
-                                    <span className="text-xs bg-black/30 px-2 py-1 rounded-full group-hover:bg-black/50 transition">
+                                    <span className={`text-xs px-2 py-1 rounded-full transition font-bold ${selectedSectorId === sector.id
+                                            ? 'bg-primary text-white shadow-sm'
+                                            : 'bg-secondary text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
+                                        }`}>
                                         {sector.tents.length} Tents
                                     </span>
                                 </button>

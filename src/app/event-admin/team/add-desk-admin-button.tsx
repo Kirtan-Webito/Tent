@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
 
 export default function AddDeskAdminButton({ eventId, sectors }: { eventId: string; sectors: any[] }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -59,12 +60,13 @@ export default function AddDeskAdminButton({ eventId, sectors }: { eventId: stri
 
     return (
         <>
-            <button
+            <Button
                 onClick={() => setIsOpen(true)}
-                className="group relative px-6 py-3 rounded-2xl bg-orange-100 border border-orange-200 text-orange-700 font-black uppercase tracking-widest text-xs hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
+                variant="primary"
+                size="md"
             >
-                <span className="relative z-10 text-nowrap">+ Recruit Operator</span>
-            </button>
+                + Recruit Operator
+            </Button>
 
             <Modal
                 isOpen={isOpen}
@@ -72,21 +74,25 @@ export default function AddDeskAdminButton({ eventId, sectors }: { eventId: stri
                 title="Recruit New Operator"
                 actions={
                     <div className="flex gap-3 w-full">
-                        <button
+                        <Button
                             type="button"
                             onClick={() => setIsOpen(false)}
-                            className="flex-1 py-3 rounded-xl text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-secondary transition-all"
+                            variant="ghost"
+                            size="md"
+                            className="flex-1 py-3"
                         >
                             Abort
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             form="add-operator-form"
                             type="submit"
-                            disabled={loading}
-                            className="flex-[2] btn-primary"
+                            variant="primary"
+                            size="md"
+                            isLoading={loading}
+                            className="flex-[2]"
                         >
                             {loading ? 'Processing...' : 'Authorize Access'}
-                        </button>
+                        </Button>
                     </div>
                 }
             >

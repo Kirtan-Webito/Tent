@@ -57,7 +57,7 @@ export async function PATCH(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { id, name, email, password, assignedSectorIds, eventId } = await req.json();
+        const { id, name, email, password, role, assignedSectorIds, eventId } = await req.json();
 
         if (!id) {
             return NextResponse.json({ error: 'Missing User ID' }, { status: 400 });
@@ -67,12 +67,37 @@ export async function PATCH(req: Request) {
         if (name) updateData.name = name;
         if (email) updateData.email = email;
         if (password) updateData.password = await bcrypt.hash(password, 10);
-        if (eventId) updateData.assignedEventId = eventId;
 
-        if (assignedSectorIds) {
-            updateData.assignedSectors = {
-                set: assignedSectorIds.map((id: string) => ({ id }))
-            };
+        // Handle role changes
+        if (role) {
+            updateData.role = role;
+
+            // Clear assignments when role changes
+            if (role === 'EVENT_ADMIN') {
+                // Clear sectors for EVENT_ADMIN
+                updateData.assignedSectors = { set: [] };
+                if (eventId) updateData.assignedEventId = eventId;
+            } else if (role === 'DESK_ADMIN') {
+                // Clear event for DESK_ADMIN
+                updateData.assignedEventId = null;
+                if (assignedSectorIds) {
+                    updateData.assignedSectors = {
+                        set: assignedSectorIds.map((id: string) => ({ id }))
+                    };
+                }
+            } else if (role === 'PUBLIC') {
+                // Clear all assignments for PUBLIC
+                updateData.assignedEventId = null;
+                updateData.assignedSectors = { set: [] };
+            }
+        } else {
+            // If role is not changing, just update assignments
+            if (eventId !== undefined) updateData.assignedEventId = eventId || null;
+            if (assignedSectorIds) {
+                updateData.assignedSectors = {
+                    set: assignedSectorIds.map((id: string) => ({ id }))
+                };
+            }
         }
 
         const user = await prisma.user.update({
