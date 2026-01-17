@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import BookingDetailsModal from './BookingDetailsModal';
-import { MagnifyingGlassIcon, PersonIcon, MobileIcon, ArchiveIcon, HomeIcon } from '@radix-ui/react-icons';
-import ConfirmDialog from '@/components/ui/ConfirmDialog';
+import { MagnifyingGlassIcon, PersonIcon, ArchiveIcon } from '@radix-ui/react-icons';
 
 interface Member {
     id: string;
@@ -35,26 +34,22 @@ interface Booking {
 export default function BookingsClient({ initialBookings }: { initialBookings: Booking[] }) {
     const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isCheckOutOpen, setIsCheckOutOpen] = useState(false);
-    const [checkOutBookingId, setCheckOutBookingId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
-    const [bookings, setBookings] = useState<Booking[]>(initialBookings);
-
     const [statusFilter, setStatusFilter] = useState('ALL');
     const searchParams = useSearchParams();
 
     useEffect(() => {
         const highlightId = searchParams.get('highlight');
         if (highlightId) {
-            const booking = bookings.find(b => b.id === highlightId);
+            const booking = initialBookings.find(b => b.id === highlightId);
             if (booking) {
                 setSelectedBooking(booking);
                 setIsModalOpen(true);
             }
         }
-    }, [searchParams, bookings]);
+    }, [searchParams, initialBookings]);
 
-    const filteredBookings = bookings.filter(booking => {
+    const filteredBookings = initialBookings.filter(booking => {
         const primaryGuest = booking.members[0];
         const searchLower = searchTerm.toLowerCase();
 
@@ -72,32 +67,6 @@ export default function BookingsClient({ initialBookings }: { initialBookings: B
     const handleBookingClick = (booking: Booking) => {
         setSelectedBooking(booking);
         setIsModalOpen(true);
-    };
-
-    const handleCheckIn = async (bookingId: string) => {
-        const res = await fetch('/api/bookings/checkin', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ bookingId })
-        });
-        if (res.ok) {
-            setBookings(bookings.map(b =>
-                b.id === bookingId ? { ...b, status: 'CHECKED_IN', checkInDate: new Date() } : b
-            ));
-        }
-    };
-
-    const handleCheckOut = async (bookingId: string) => {
-        const res = await fetch('/api/bookings/checkout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ bookingId })
-        });
-        if (res.ok) {
-            setBookings(bookings.map(b =>
-                b.id === bookingId ? { ...b, status: 'CHECKED_OUT', checkOutDate: new Date() } : b
-            ));
-        }
     };
 
     return (
@@ -118,16 +87,10 @@ export default function BookingsClient({ initialBookings }: { initialBookings: B
                             className="flex-1 sm:w-40 px-4 py-2.5 bg-white border border-border rounded-xl text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all hover:bg-secondary"
                         >
                             <option value="ALL">All Status</option>
-                            <option value="CONFIRMED">Confirmed</option>
-                            <option value="CHECKED_IN">Checked In</option>
+                            <option value="CONFIRMED">Checked In</option>
                             <option value="CHECKED_OUT">Checked Out</option>
                             <option value="CANCELLED">Cancelled</option>
                         </select>
-                        <div className="hidden lg:block h-8 w-px bg-border mx-1" />
-                        <div className="lg:hidden text-[10px] font-black text-muted-foreground uppercase flex flex-col justify-center">
-                            <span>{filteredBookings.length}</span>
-                            <span>RES</span>
-                        </div>
                     </div>
 
                     <div className="relative flex-1 sm:w-64">
@@ -156,16 +119,15 @@ export default function BookingsClient({ initialBookings }: { initialBookings: B
                             <div
                                 key={booking.id}
                                 onClick={() => handleBookingClick(booking)}
-                                className="bg-white p-5 rounded-2xl border border-border shadow-sm active:scale-95 transition-all"
+                                className="bg-white p-5 rounded-2xl border border-border shadow-sm transition-all"
                             >
                                 <div className="flex justify-between items-start mb-4">
                                     <div className="font-mono text-[10px] text-muted-foreground">#{booking.id.slice(0, 8)}</div>
-                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ${booking.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' :
-                                        booking.status === 'CHECKED_IN' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
-                                            booking.status === 'CHECKED_OUT' ? 'bg-secondary text-muted-foreground border border-border' :
-                                                'bg-red-100 text-red-700 border border-red-200'
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ${(booking.status === 'CONFIRMED' || booking.status === 'CHECKED_IN')
+                                            ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+                                            : 'bg-secondary text-muted-foreground border border-border'
                                         }`}>
-                                        {booking.status}
+                                        {(booking.status === 'CONFIRMED' || booking.status === 'CHECKED_IN') ? 'CHECKED IN' : booking.status}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-4 mb-4">
@@ -188,7 +150,7 @@ export default function BookingsClient({ initialBookings }: { initialBookings: B
                                     </div>
                                     <div className="text-[10px] text-right">
                                         <div className="font-black uppercase tracking-widest text-[8px] text-muted-foreground mb-1">Check Out</div>
-                                        <div className="text-foreground font-medium">{booking.checkOutDate ? new Date(booking.checkOutDate).toLocaleDateString('en-GB') : 'TBD'}</div>
+                                        <div className="text-foreground font-medium">{booking.checkOutDate ? new Date(booking.checkOutDate).toLocaleDateString('en-GB') : 'Active'}</div>
                                     </div>
                                 </div>
                             </div>
@@ -207,13 +169,12 @@ export default function BookingsClient({ initialBookings }: { initialBookings: B
                             <th className="p-6">Occupancy</th>
                             <th className="p-6">Timeline</th>
                             <th className="p-6">Status</th>
-                            <th className="p-6 text-right">Operations</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
                         {filteredBookings.length === 0 ? (
                             <tr>
-                                <td colSpan={6} className="p-20 text-center text-muted-foreground italic">
+                                <td colSpan={5} className="p-20 text-center text-muted-foreground italic">
                                     <ArchiveIcon className="w-12 h-12 mx-auto mb-4 opacity-20" />
                                     {searchTerm || statusFilter !== 'ALL' ? 'No matches found in current node.' : 'Awaiting guest synchronization...'}
                                 </td>
@@ -233,7 +194,7 @@ export default function BookingsClient({ initialBookings }: { initialBookings: B
                                                     <PersonIcon className="w-5 h-5 text-muted-foreground group-hover:text-primary" />
                                                 </div>
                                                 <div>
-                                                    <div className="font-bold text-foreground group-hover:text-primary transition-colors">
+                                                    <div className="font-bold text-foreground group-hover:text-primary transition-colors uppercase">
                                                         {primaryGuest ? primaryGuest.name : 'Unknown Guest'}
                                                     </div>
                                                     <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-tighter">
@@ -244,7 +205,7 @@ export default function BookingsClient({ initialBookings }: { initialBookings: B
                                         </td>
                                         <td className="p-6">
                                             <div className="font-black text-emerald-600 tracking-tighter text-lg">{booking.tent.name}</div>
-                                            <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">SEC: 01_GLOBAL</div>
+                                            <div className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">GLOBAL SECTOR</div>
                                         </td>
                                         <td className="p-6">
                                             <span className="px-3 py-1 rounded-full bg-blue-100 border border-blue-200 text-blue-700 text-[10px] font-black uppercase tracking-widest">
@@ -255,44 +216,16 @@ export default function BookingsClient({ initialBookings }: { initialBookings: B
                                             <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                                                 <span className="text-foreground">{booking.checkInDate ? new Date(booking.checkInDate).toLocaleDateString('en-GB') : 'TBD'}</span>
                                                 <span className="opacity-30">→</span>
-                                                <span className="text-foreground">{booking.checkOutDate ? new Date(booking.checkOutDate).toLocaleDateString('en-GB') : 'TBD'}</span>
+                                                <span className="text-foreground">{booking.checkOutDate ? new Date(booking.checkOutDate).toLocaleDateString('en-GB') : 'Active'}</span>
                                             </div>
                                         </td>
                                         <td className="p-6">
-                                            <span className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${booking.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' :
-                                                booking.status === 'CHECKED_IN' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
-                                                    booking.status === 'CHECKED_OUT' ? 'bg-secondary text-muted-foreground border border-border' :
-                                                        'bg-red-100 text-red-700 border border-red-200'
+                                            <span className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${(booking.status === 'CONFIRMED' || booking.status === 'CHECKED_IN')
+                                                    ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+                                                    : 'bg-secondary text-muted-foreground border border-border'
                                                 }`}>
-                                                {booking.status}
+                                                {(booking.status === 'CONFIRMED' || booking.status === 'CHECKED_IN') ? 'CHECKED IN' : booking.status}
                                             </span>
-                                        </td>
-                                        <td className="p-6">
-                                            <div className="flex justify-end gap-2">
-                                                {booking.status === 'CONFIRMED' && (
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleCheckIn(booking.id);
-                                                        }}
-                                                        className="px-4 py-2 bg-emerald-100 border border-emerald-200 hover:bg-emerald-600 text-emerald-700 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95"
-                                                    >
-                                                        Check In
-                                                    </button>
-                                                )}
-                                                {booking.status === 'CHECKED_IN' && (
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setCheckOutBookingId(booking.id);
-                                                            setIsCheckOutOpen(true);
-                                                        }}
-                                                        className="px-4 py-2 bg-red-100 border border-red-200 hover:bg-red-600 text-red-700 hover:text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all active:scale-95"
-                                                    >
-                                                        Check Out
-                                                    </button>
-                                                )}
-                                            </div>
                                         </td>
                                     </tr>
                                 );
@@ -306,23 +239,6 @@ export default function BookingsClient({ initialBookings }: { initialBookings: B
                 booking={selectedBooking}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-            />
-
-            <ConfirmDialog
-                isOpen={isCheckOutOpen}
-                onClose={() => {
-                    setIsCheckOutOpen(false);
-                    setCheckOutBookingId(null);
-                }}
-                onConfirm={() => {
-                    if (checkOutBookingId) {
-                        handleCheckOut(checkOutBookingId);
-                    }
-                }}
-                title="Check Out Guest"
-                message="Are you sure you want to check out this guest?"
-                confirmText="Check Out"
-                variant="danger"
             />
         </div>
     );

@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 
 export async function POST(req: Request) {
     const session = await getSession();
@@ -14,6 +15,8 @@ export async function POST(req: Request) {
     const { bookingId } = await req.json();
 
     if (!bookingId) {
+        revalidatePath('/desk-admin/booking');
+        revalidatePath('/desk-admin/guests');
         return NextResponse.json({ error: 'Booking ID required' }, { status: 400 });
     }
 
@@ -34,6 +37,9 @@ export async function POST(req: Request) {
             userId
         }
     });
+
+    revalidatePath('/desk-admin/booking');
+    revalidatePath('/desk-admin/guests');
 
     return NextResponse.json({ success: true, booking });
 }

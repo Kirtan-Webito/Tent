@@ -17,12 +17,10 @@ export async function POST(req: Request) {
             include: {
                 assignedSectors: {
                     include: {
-                        event: {
-                            select: { id: true, endDate: true, name: true }
-                        }
+                        event: true
                     }
                 },
-                assignedEvent: { select: { id: true, endDate: true, name: true } }
+                assignedEvent: true
             }
         });
 
@@ -47,7 +45,7 @@ export async function POST(req: Request) {
                     error: `Access Denied: The event "${user.assignedEvent.name}" has expired.`
                 }, { status: 403 });
             }
-        } else if (user.role === 'DESK_ADMIN' && user.assignedSectors.length > 0) {
+        } else if ((user.role === 'DESK_ADMIN' || user.role === 'TEAM_HEAD') && user.assignedSectors.length > 0) {
             // Check if user has ANY active event context.
             // If ALL assigned (via sectors) events are expired, deny access.
             const hasActiveEvent = user.assignedSectors.some(sector => {

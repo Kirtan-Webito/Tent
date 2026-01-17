@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
+import { useToast } from '@/components/providers/ToastProvider';
 
 interface Sector {
     id: string;
@@ -14,6 +15,7 @@ interface User {
     id: string;
     name: string | null;
     email: string;
+    role: string;
     assignedSectors: Sector[];
 }
 
@@ -30,6 +32,7 @@ export default function EditDeskAdminButton({
         user.assignedSectors.map(s => s.id)
     );
     const router = useRouter();
+    const { showToast } = useToast();
 
     const toggleSector = (id: string) => {
         setSelectedSectorIds(prev =>
@@ -40,7 +43,7 @@ export default function EditDeskAdminButton({
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (selectedSectorIds.length === 0) {
-            alert('Please select at least one operational zone.');
+            showToast('Please select at least one operational zone.', 'error');
             return;
         }
         setLoading(true);
@@ -50,6 +53,7 @@ export default function EditDeskAdminButton({
             id: user.id,
             name: formData.get('name'),
             email: formData.get('email'),
+            role: formData.get('role'),
             assignedSectorIds: selectedSectorIds,
         };
 
@@ -65,14 +69,15 @@ export default function EditDeskAdminButton({
 
             if (res.ok) {
                 setIsOpen(false);
+                showToast('Records updated successfully', 'success');
                 router.refresh();
             } else {
                 const err = await res.json();
-                alert(err.error || 'Update failed');
+                showToast(err.error || 'Update failed', 'error');
             }
         } catch (error) {
             console.error(error);
-            alert('An error occurred');
+            showToast('An error occurred', 'error');
         } finally {
             setLoading(false);
         }
@@ -129,6 +134,13 @@ export default function EditDeskAdminButton({
                         <div>
                             <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">New Password (optional)</label>
                             <input name="password" type="password" className="input-primary" placeholder="••••••••" />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Permission Level</label>
+                            <select name="role" defaultValue={user.role} required className="input-primary appearance-none">
+                                <option value="DESK_ADMIN">Desk Admin (Standard Access)</option>
+                                <option value="TEAM_HEAD">Team Head (Full Registry Access)</option>
+                            </select>
                         </div>
                         <div>
                             <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3">Operational Zones</label>

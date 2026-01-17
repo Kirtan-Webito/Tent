@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
+import { useToast } from '@/components/providers/ToastProvider';
 
 export default function AddDeskAdminButton({ eventId, sectors }: { eventId: string; sectors: any[] }) {
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [selectedSectorIds, setSelectedSectorIds] = useState<string[]>([]);
     const router = useRouter();
+    const { showToast } = useToast();
 
     const toggleSector = (id: string) => {
         setSelectedSectorIds(prev =>
@@ -20,7 +22,7 @@ export default function AddDeskAdminButton({ eventId, sectors }: { eventId: stri
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (selectedSectorIds.length === 0) {
-            alert('Please select at least one operational zone.');
+            showToast('Please select at least one operational zone.', 'error');
             return;
         }
         setLoading(true);
@@ -32,7 +34,7 @@ export default function AddDeskAdminButton({ eventId, sectors }: { eventId: stri
             password: formData.get('password'),
             assignedSectorIds: selectedSectorIds,
             eventId: eventId,
-            role: 'DESK_ADMIN'
+            role: formData.get('role') || 'DESK_ADMIN'
         };
 
         try {
@@ -45,14 +47,15 @@ export default function AddDeskAdminButton({ eventId, sectors }: { eventId: stri
             if (res.ok) {
                 setIsOpen(false);
                 setSelectedSectorIds([]);
+                showToast('Operator recruited successfully', 'success');
                 router.refresh();
             } else {
                 const err = await res.json();
-                alert(err.error || 'Creation failed');
+                showToast(err.error || 'Creation failed', 'error');
             }
         } catch (error) {
             console.error(error);
-            alert('An error occurred');
+            showToast('An error occurred', 'error');
         } finally {
             setLoading(false);
         }
@@ -109,6 +112,13 @@ export default function AddDeskAdminButton({ eventId, sectors }: { eventId: stri
                         <div>
                             <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Temporary Password</label>
                             <input name="password" type="password" required className="input-primary" placeholder="••••••••" />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Permission Level</label>
+                            <select name="role" required className="input-primary appearance-none">
+                                <option value="DESK_ADMIN">Desk Admin (Standard Access)</option>
+                                <option value="TEAM_HEAD">Team Head (Full Registry Access)</option>
+                            </select>
                         </div>
                         <div>
                             <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3">Assigned Operational Zones</label>

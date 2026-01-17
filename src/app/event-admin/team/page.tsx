@@ -2,16 +2,17 @@ export const dynamic = 'force-dynamic';
 
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
+import { PersonIcon, GroupIcon } from '@radix-ui/react-icons';
 import AddUserButton from '@/app/super-admin/users/add-user-button'; // Reuse? Need slight mod or new component
 
 import AddDeskAdminButton from '@/app/event-admin/team/add-desk-admin-button';
 import RemoveDeskAdminButton from '@/app/event-admin/team/remove-desk-admin-button';
 import EditDeskAdminButton from '@/app/event-admin/team/edit-desk-admin-button';
 
-async function getDeskAdmins(eventId: string) {
+async function getTeamMembers(eventId: string) {
     return await prisma.user.findMany({
         where: {
-            role: 'DESK_ADMIN',
+            role: { in: ['DESK_ADMIN', 'TEAM_HEAD'] },
             assignedEventId: eventId
         },
         select: {
@@ -38,7 +39,7 @@ async function getSectors(eventId: string) {
 export default async function TeamPage() {
     const session = await getSession();
     const eventId = (session as any).assignedEventId;
-    const users = await getDeskAdmins(eventId);
+    const users = await getTeamMembers(eventId);
     const sectors = await getSectors(eventId);
 
     return (
@@ -57,7 +58,9 @@ export default async function TeamPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
                 {users.length === 0 ? (
                     <div className="col-span-full py-20 bg-card rounded-[2rem] border-dashed border-2 border-muted text-center text-muted-foreground">
-                        <div className="text-4xl mb-4 opacity-50">👋</div>
+                        <div className="flex justify-center mb-4 opacity-30">
+                            <PersonIcon className="w-12 h-12" />
+                        </div>
                         No desk operators assigned to this sector.
                     </div>
                 ) : (
@@ -78,8 +81,11 @@ export default async function TeamPage() {
 
                             <div className="flex items-center justify-between pt-4 border-t border-border">
                                 <div className="flex flex-col gap-1 items-end">
-                                    <span className="px-3 py-1 rounded-full bg-orange-100 border border-orange-200 text-orange-700 text-[10px] font-black uppercase tracking-widest">
-                                        DESK_ADMIN
+                                    <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border ${user.role === 'TEAM_HEAD'
+                                        ? 'bg-orange-50 text-orange-600 border-orange-100'
+                                        : 'bg-blue-50 text-blue-600 border-blue-100'
+                                        }`}>
+                                        {user.role.replace('_', ' ')}
                                     </span>
                                     {user.assignedSectors && user.assignedSectors.length > 0 && (
                                         <div className="flex flex-wrap gap-1 mt-1 justify-end">
@@ -117,7 +123,9 @@ export default async function TeamPage() {
                         {users.length === 0 ? (
                             <tr>
                                 <td colSpan={5} className="p-20 text-center text-muted-foreground italic">
-                                    <div className="text-4xl mb-4 opacity-50">👥</div>
+                                    <div className="flex justify-center mb-4 opacity-30">
+                                        <GroupIcon className="w-12 h-12" />
+                                    </div>
                                     No administrative units detected in current cluster...
                                 </td>
                             </tr>
@@ -151,8 +159,11 @@ export default async function TeamPage() {
                                         </div>
                                     </td>
                                     <td className="p-6">
-                                        <span className="px-3 py-1 rounded-full bg-orange-100 border border-orange-200 text-orange-700 text-[10px] font-black uppercase tracking-widest">
-                                            DESK_ADMIN
+                                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${user.role === 'TEAM_HEAD'
+                                            ? 'bg-orange-50 text-orange-600 border-orange-100'
+                                            : 'bg-blue-50 text-blue-600 border-blue-100'
+                                            }`}>
+                                            {user.role.replace('_', ' ')}
                                         </span>
                                     </td>
                                     <td className="p-6 text-right">

@@ -12,11 +12,30 @@ export default async function BookingsPage() {
 
     const bookings = await prisma.booking.findMany({
         where: {
-            tent: { sector: { eventId } }
+            tent: { sector: { eventId } },
+            // Only fetch bookings with actual guest members
+            members: {
+                some: {}
+            }
         },
         include: {
-            tent: true,
-            members: true
+            tent: {
+                include: {
+                    sector: {
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+            },
+            members: true,
+            deskAdmin: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true
+                }
+            }
         },
         orderBy: { createdAt: 'desc' }
     });

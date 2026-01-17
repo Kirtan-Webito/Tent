@@ -77,8 +77,8 @@ export async function PATCH(req: Request) {
                 // Clear sectors for EVENT_ADMIN
                 updateData.assignedSectors = { set: [] };
                 if (eventId) updateData.assignedEventId = eventId;
-            } else if (role === 'DESK_ADMIN') {
-                // Clear event for DESK_ADMIN
+            } else if (role === 'DESK_ADMIN' || role === 'TEAM_HEAD') {
+                // Clear event for DESK_ADMIN / TEAM_HEAD
                 updateData.assignedEventId = null;
                 if (assignedSectorIds) {
                     updateData.assignedSectors = {

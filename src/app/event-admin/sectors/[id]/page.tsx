@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { prisma } from '@/lib/prisma';
+import { naturalSort } from '@/lib/utils/naturalSort';
 import BulkCreateTents from './bulk-create-tents';
 import BulkDeleteTents from './bulk-delete-tents';
 import DeleteTentButton from '../delete-tent-button';
@@ -19,6 +20,11 @@ async function getSector(id: string) {
 export default async function SectorDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const sector = await getSector(id);
+
+    // Sort tents naturally (e.g. 1, 2, 10 instead of 1, 10, 2)
+    if (sector?.tents) {
+        sector.tents.sort((a, b) => naturalSort(a.name, b.name));
+    }
 
     if (!sector) return (
         <div className="p-20 text-center animate-in fade-in duration-500">

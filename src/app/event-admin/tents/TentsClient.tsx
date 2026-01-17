@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import TentDetailsModal from './TentDetailsModal';
 import { CubeIcon } from '@radix-ui/react-icons';
+import { naturalSort } from '@/lib/utils/naturalSort';
 
 interface Member {
     id: string;
@@ -32,13 +33,22 @@ interface TentItem {
     name: string;
     capacity: number;
     status: string;
-    currentBooking?: Booking;
+    bookings: Booking[];
 }
 
 export default function TentsClient({ tents }: { tents: SectorItem[] }) {
     const [selectedTent, setSelectedTent] = useState<any>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [expandedSectors, setExpandedSectors] = useState<Set<string>>(new Set());
+
+    // Apply natural sorting to ensure correct display
+    const sortedTents = useMemo(() => {
+        const sorted = [...tents].sort((a, b) => naturalSort(a.name, b.name));
+        sorted.forEach(sector => {
+            sector.tents = [...sector.tents].sort((a, b) => naturalSort(a.name, b.name));
+        });
+        return sorted;
+    }, [tents]);
 
     const handleTentClick = (tent: any, sector: { id: string, name: string }) => {
         setSelectedTent({
@@ -70,13 +80,13 @@ export default function TentsClient({ tents }: { tents: SectorItem[] }) {
             </div>
 
             <div className="space-y-4 animate-in fade-in duration-500">
-                {tents.length === 0 ? (
+                {sortedTents.length === 0 ? (
                     <div className="py-20 bg-card border border-dashed border-border rounded-[2rem] text-center text-muted-foreground">
                         <CubeIcon className="w-12 h-12 mx-auto mb-4 opacity-20" />
                         No sectors found.
                     </div>
                 ) : (
-                    tents.map(sector => {
+                    sortedTents.map(sector => {
                         const isExpanded = expandedSectors.has(sector.id);
                         const availableTents = sector.tents.filter(t => t.status === 'Available').length;
                         const occupiedTents = sector.tents.filter(t => t.status === 'Occupied').length;
@@ -152,32 +162,37 @@ export default function TentsClient({ tents }: { tents: SectorItem[] }) {
                                                                 </td>
                                                                 <td className="px-6 py-4">
                                                                     <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${item.status === 'Available' ? 'bg-emerald-100/50 text-emerald-700 border-emerald-200' :
-                                                                            item.status === 'Occupied' ? 'bg-orange-100/50 text-orange-700 border-orange-200' :
-                                                                                'bg-secondary text-muted-foreground border-border'
+                                                                        item.status === 'Occupied' ? 'bg-orange-100/50 text-orange-700 border-orange-200' :
+                                                                            'bg-secondary text-muted-foreground border-border'
                                                                         }`}>
                                                                         {item.status}
                                                                     </span>
                                                                 </td>
                                                                 <td className="px-6 py-4">
-                                                                    {item.currentBooking ? (
-                                                                        <div className="flex items-center gap-2">
-                                                                            <div className="flex -space-x-2">
-                                                                                {item.currentBooking.members.slice(0, 3).map((m, i) => (
-                                                                                    <div key={i} className="w-6 h-6 rounded-full bg-primary/10 border border-white flex items-center justify-center text-[8px] font-bold text-primary ring-2 ring-white">
-                                                                                        {m.name.charAt(0)}
+                                                                    {item.bookings.length > 0 ? (
+                                                                        (() => {
+                                                                            const allMembers = item.bookings.flatMap(b => b.members);
+                                                                            return (
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <div className="flex -space-x-2">
+                                                                                        {allMembers.slice(0, 3).map((m, i) => (
+                                                                                            <div key={i} className="w-6 h-6 rounded-full bg-primary/10 border border-white flex items-center justify-center text-[8px] font-bold text-primary ring-2 ring-white">
+                                                                                                {m.name.charAt(0)}
+                                                                                            </div>
+                                                                                        ))}
+                                                                                        {allMembers.length > 3 && (
+                                                                                            <div className="w-6 h-6 rounded-full bg-secondary border border-white flex items-center justify-center text-[8px] font-bold text-muted-foreground ring-2 ring-white">
+                                                                                                +{allMembers.length - 3}
+                                                                                            </div>
+                                                                                        )}
                                                                                     </div>
-                                                                                ))}
-                                                                                {item.currentBooking.members.length > 3 && (
-                                                                                    <div className="w-6 h-6 rounded-full bg-secondary border border-white flex items-center justify-center text-[8px] font-bold text-muted-foreground ring-2 ring-white">
-                                                                                        +{item.currentBooking.members.length - 3}
-                                                                                    </div>
-                                                                                )}
-                                                                            </div>
-                                                                            <span className="text-xs font-medium text-foreground">
-                                                                                {item.currentBooking.members[0].name}
-                                                                                {item.currentBooking.members.length > 1 && <span className="text-muted-foreground"> +{item.currentBooking.members.length - 1}</span>}
-                                                                            </span>
-                                                                        </div>
+                                                                                    <span className="text-xs font-medium text-foreground">
+                                                                                        {allMembers[0].name.toLowerCase()}
+                                                                                        {allMembers.length > 1 && <span className="text-muted-foreground"> +{allMembers.length - 1}</span>}
+                                                                                    </span>
+                                                                                </div>
+                                                                            );
+                                                                        })()
                                                                     ) : (
                                                                         <span className="text-xs text-muted-foreground italic">-</span>
                                                                     )}

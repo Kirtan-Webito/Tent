@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
+import { revalidatePath } from 'next/cache';
 
 export async function POST(req: Request) {
     try {
         const session = await getSession();
-        if (!session || (session as any).role !== 'DESK_ADMIN') {
+        if (!session || ((session as any).role !== 'DESK_ADMIN' && (session as any).role !== 'TEAM_HEAD')) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -15,6 +16,8 @@ export async function POST(req: Request) {
         if (!tentId || !members || members.length === 0) {
             return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
         }
+
+        const now = new Date();
 
         // Transaction: Create Booking + Create Members + Create Audit Log
         const result = await prisma.$transaction(async (tx: any) => {
@@ -27,6 +30,7 @@ export async function POST(req: Request) {
                     notes,
                     checkInDate: checkInDate ? new Date(checkInDate) : null,
                     checkOutDate: checkOutDate ? new Date(checkOutDate) : null,
+                    checkInTime: now,
                     status: 'CONFIRMED'
                 }
             });
@@ -38,7 +42,8 @@ export async function POST(req: Request) {
                         name: m.name,
                         age: parseInt(m.age),
                         gender: m.gender,
-                        bookingId: booking.id
+                        bookingId: booking.id,
+                        checkedInAt: now
                     }
                 });
             }
@@ -54,6 +59,9 @@ export async function POST(req: Request) {
 
             return booking;
         });
+
+        revalidatePath('/desk-admin/booking');
+        revalidatePath('/desk-admin/guests');
 
         return NextResponse.json(result);
 

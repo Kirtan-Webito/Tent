@@ -13,9 +13,19 @@ export async function GET(req: NextRequest) {
     const userRole = (session as any).role;
     const eventId = (session as any).assignedEventId || (session as any).eventId;
 
+    let cleanup: (() => void) | null = null;
+
     const stream = new ReadableStream({
         start(controller) {
             const encoder = new TextEncoder();
+
+            const send = (data: string) => {
+                try {
+                    controller.enqueue(encoder.encode(data));
+                } catch (e) {
+                    // Stream might be closed
+                }
+            };
 
             const onNotification = (notification: any) => {
                 // Filter notification based on target audience and event context
@@ -25,22 +35,36 @@ export async function GET(req: NextRequest) {
                     notification.targetRole === userRole;
 
                 if (isForEvent && isForRole) {
-                    controller.enqueue(encoder.encode(`data: ${JSON.stringify(notification)}\n\n`));
+                    send(`data: ${JSON.stringify(notification)}\n\n`);
                 }
             };
 
+            // Send initial connection confirmation
+            send(': connected\n\n');
+
             // Keep-alive heartbeat every 15 seconds
             const heartbeat = setInterval(() => {
-                controller.enqueue(encoder.encode(': heartbeat\n\n'));
+                send(': heartbeat\n\n');
             }, 15000);
 
             notificationEmitter.on('new-notification', onNotification);
 
-            req.signal.addEventListener('abort', () => {
+            cleanup = () => {
                 clearInterval(heartbeat);
                 notificationEmitter.off('new-notification', onNotification);
-                controller.close();
+            };
+
+            req.signal.addEventListener('abort', () => {
+                if (cleanup) cleanup();
+                try {
+                    controller.close();
+                } catch (e) {
+                    // Ignore already closed errors
+                }
             });
+        },
+        cancel() {
+            if (cleanup) cleanup();
         }
     });
 
@@ -49,6 +73,8 @@ export async function GET(req: NextRequest) {
             'Content-Type': 'text/event-stream',
             'Cache-Control': 'no-cache, no-transform',
             'Connection': 'keep-alive',
+            'X-Accel-Buffering': 'no',
+            'Content-Encoding': 'none',
         },
     });
 }

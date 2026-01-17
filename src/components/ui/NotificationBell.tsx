@@ -39,6 +39,10 @@ export default function NotificationBell() {
         // Real-time notifications via SSE
         const eventSource = new EventSource('/api/notifications/stream');
 
+        eventSource.onopen = () => {
+            console.log('SSE connection established');
+        };
+
         eventSource.onmessage = (event) => {
             try {
                 const newNotification = JSON.parse(event.data);
@@ -50,8 +54,15 @@ export default function NotificationBell() {
         };
 
         eventSource.onerror = (error) => {
-            console.error('SSE connection error:', error);
-            eventSource.close();
+            // Log the error, but don't close immediately.
+            // Browser will usually attempt to reconnect automatically unless it's a fatal error.
+            console.warn('SSE connection issue:', error);
+
+            // If the connection is closed, the browser will try to reconnect.
+            // We only close if we are unmounting or if we want to stop retrying.
+            if (eventSource.readyState === EventSource.CLOSED) {
+                console.error('SSE connection closed. Browser will attempt to reconnect.');
+            }
         };
 
         return () => {

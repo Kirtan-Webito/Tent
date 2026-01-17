@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/session';
+import { revalidatePath } from 'next/cache';
 
 export async function POST(req: Request) {
     try {
         const session = await getSession();
-        if (!session || (session as any).role !== 'DESK_ADMIN') {
+        if (!session || ((session as any).role !== 'DESK_ADMIN' && (session as any).role !== 'TEAM_HEAD')) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -36,6 +37,9 @@ export async function POST(req: Request) {
 
             return booking;
         });
+
+        revalidatePath('/desk-admin/booking');
+        revalidatePath('/desk-admin/guests');
 
         return NextResponse.json(result);
 

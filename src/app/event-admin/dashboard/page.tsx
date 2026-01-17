@@ -22,6 +22,12 @@ async function getStats(eventId: string) {
             tents: {
                 include: {
                     bookings: {
+                        where: {
+                            // Only fetch bookings with actual guest members
+                            members: {
+                                some: {}
+                            }
+                        },
                         include: { members: true }
                     }
                 }
@@ -180,57 +186,6 @@ export default async function DashboardPage() {
 
                 {/* Left: Occupancy Deep Dive */}
                 <div className="lg:col-span-8 space-y-6 md:space-y-8">
-                    <div className="bg-white p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-border shadow-sm overflow-hidden">
-                        <div className="flex items-center justify-between mb-6 md:mb-8">
-                            <div>
-                                <h3 className="text-xl md:text-2xl font-bold text-foreground">Sector Performance</h3>
-                                <p className="text-xs md:text-sm text-muted-foreground">Occupancy breakdown by zone</p>
-                            </div>
-                            <div className="hidden sm:block text-xs font-mono text-orange-700 bg-orange-100 px-3 py-1 rounded-full border border-orange-200 shadow-sm">
-                                DATA_REFRESH: OK
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div className="md:col-span-2 lg:col-span-1 h-64 md:h-72 flex items-end overflow-x-auto custom-scrollbar pb-2">
-                                <div className="min-w-[300px] w-full h-full flex items-end">
-                                    {stats.sectorData.length > 0 ? (
-                                        <BarChart data={stats.sectorData} height={250} />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-muted-foreground italic border border-dashed border-border rounded-2xl bg-secondary/30">
-                                            No sector activity found.
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col items-center justify-center p-6 bg-white rounded-[1.5rem] border border-border shadow-sm">
-                                <h4 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 text-center">Guest Diversity</h4>
-                                <DonutChart
-                                    data={stats.genderData}
-                                    size={140}
-                                />
-                                <div className="mt-4 flex gap-4 text-[9px] font-bold text-muted-foreground uppercase">
-                                    <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div> M</div>
-                                    <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-pink-400"></div> F</div>
-                                    <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-purple-400"></div> O</div>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col items-center justify-center p-6 bg-white rounded-[1.5rem] border border-border shadow-sm">
-                                <h4 className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 text-center">Reservation Lifecycle</h4>
-                                <DonutChart
-                                    data={stats.statusData}
-                                    size={140}
-                                />
-                                <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1 text-[8px] font-bold text-muted-foreground uppercase">
-                                    <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div> Confirmed</div>
-                                    <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> In Tent</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     {/* Quick Controls */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                         {[
@@ -252,7 +207,7 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Right: Activity Stream */}
-                <div className="lg:col-span-4 flex flex-col gap-6 md:gap-8">
+                <div className="lg:col-span-12 flex flex-col gap-6 md:gap-8">
                     <div className="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-border shadow-sm flex-1 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                             <FileTextIcon className="w-16 h-16 text-primary" />

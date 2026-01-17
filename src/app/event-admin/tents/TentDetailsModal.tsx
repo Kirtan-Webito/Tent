@@ -33,7 +33,7 @@ interface TentDetails {
     capacity: number;
     sector: Sector;
     status: string;
-    currentBooking?: Booking;
+    bookings: Booking[];
 }
 
 export default function TentDetailsModal({
@@ -84,9 +84,9 @@ export default function TentDetailsModal({
                     <div className="flex justify-between w-full">
                         <button
                             onClick={() => setIsDeleteOpen(true)}
-                            disabled={loading || !!tent.currentBooking}
+                            disabled={loading || tent.bookings.length > 0}
                             className="px-6 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-xl transition disabled:opacity-30 disabled:hover:bg-red-50 active:scale-95"
-                            title={tent.currentBooking ? "Cannot delete occupied tent" : "Delete Tent"}
+                            title={tent.bookings.length > 0 ? "Cannot delete occupied tent" : "Delete Tent"}
                         >
                             Delete Tent
                         </button>
@@ -134,38 +134,47 @@ export default function TentDetailsModal({
                                             {tent.status === 'Available' ? 'Free to Book' : 'Currently Occupied'}
                                         </span>
                                     </div>
+                                    <div className="bg-white rounded-xl p-4 shadow-sm border border-border/50 flex items-center justify-between">
+                                        <span className="text-sm font-bold text-muted-foreground">Total Persons</span>
+                                        <span className="text-lg font-black text-primary">
+                                            {tent.bookings.reduce((sum, b) => sum + b.members.length, 0)} Persons
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Right: Occupancy/Action */}
                         <div className="space-y-4">
-                            {tent.currentBooking ? (
+                            {tent.bookings.length > 0 ? (
                                 <div className="bg-white border border-border rounded-2xl p-5 shadow-sm h-full">
-                                    <h4 className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-4">Current Booking</h4>
+                                    <h4 className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-4">Current Occupants</h4>
                                     <div className="space-y-4">
+                                        {/* Show combined dates if multiple, or just the main one */}
                                         <div className="flex items-center justify-between p-3 bg-secondary/50 rounded-xl border border-border/50">
                                             <div className="flex flex-col">
-                                                <span className="text-[10px] font-black uppercase text-muted-foreground">Dates</span>
+                                                <span className="text-[10px] font-black uppercase text-muted-foreground">Status</span>
                                                 <span className="text-sm font-bold text-foreground">
-                                                    {tent.currentBooking.checkInDate ? new Date(tent.currentBooking.checkInDate).toLocaleDateString() : 'N/A'} - {tent.currentBooking.checkOutDate ? new Date(tent.currentBooking.checkOutDate).toLocaleDateString() : 'N/A'}
+                                                    {tent.bookings.length} Active {tent.bookings.length === 1 ? 'Booking' : 'Bookings'}
                                                 </span>
                                             </div>
                                         </div>
 
-                                        <div className="space-y-2 max-h-[200px] overflow-y-auto custom-scrollbar pr-1">
-                                            {tent.currentBooking.members.map((member, idx) => (
+                                        <div className="space-y-2 max-h-[250px] overflow-y-auto custom-scrollbar pr-1">
+                                            {tent.bookings.flatMap(b => b.members.map(m => ({ ...m, booking: b }))).map((member, idx) => (
                                                 <div key={member.id} className="flex items-center gap-3 p-3 bg-card border border-border rounded-xl shadow-sm hover:border-primary/30 transition-colors">
                                                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
                                                         {member.name.charAt(0)}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <p className="font-bold text-foreground text-sm truncate">{member.name}</p>
+                                                        <p className="font-bold text-foreground text-sm truncate">{member.name.toLowerCase()}</p>
                                                         <p className="text-[10px] text-muted-foreground uppercase font-medium">
                                                             {member.age} Y • {member.gender}
                                                         </p>
                                                     </div>
-                                                    {idx === 0 && <span className="text-[8px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded font-black uppercase">Host</span>}
+                                                    {member.booking.members[0].id === member.id && (
+                                                        <span className="text-[8px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded font-black uppercase">Host</span>
+                                                    )}
                                                 </div>
                                             ))}
                                         </div>
